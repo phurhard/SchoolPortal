@@ -9,6 +9,10 @@ users shoudld inherit from django users model"""
 
 
 class User(models.Model):
+    ROLE = [
+        ('TEACHER', 'teacher'),
+        ('STUDENT', 'student'),
+    ]
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     other_name = models.CharField(max_length=255, default=None, null=True)

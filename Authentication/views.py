@@ -1,4 +1,4 @@
-# from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 # from django.views.decorators.http import require_POST
 from main.models import User, Teacher, Student
@@ -12,6 +12,26 @@ def index(request):
     return HttpResponse('Authentication')
 
 
+# @require_POST
+def signup(request):
+    if request.method == 'POST':
+        data = RegisterForm(request.POST)
+        if data.is_valid():
+            user = data.save()
+            # data.save(commit=False)
+            if request.POST.get('role') == 'Teacher':
+                Teacher.objects.create(user=user)
+                # Teacher.objects.create(user=user)
+            elif request.POST.get('role') == 'Student':
+                Student.objects.create(user=user)
+            else:
+                User.objects.create(user=user)
+            return redirect('/index')
+    else:
+        data = RegisterForm()
+    return render(request, 'registration/sign_up.html', {'data': data})
+
+"""
 @csrf_exempt
 def signup(request):
     if request.method == 'POST':
@@ -23,8 +43,9 @@ def signup(request):
             'role': request.POST.get('role'),
             'phone_number': request.POST.get('phone_number')
         }
-        # print(firstname, lastname, othername)
-        
+        # will use the usercreation form here for later refactoring
+        # validator(user)
+
         if request.POST.get('role') == 'Student':
             Student.objects.create(**user)
             print('this is a student')
@@ -37,32 +58,6 @@ def signup(request):
     else:
         user = UserCreationForm()
         # print(user)
-    return JsonResponse(user)#.to_json(), safe=False)
-    # else:
-    #     return JsonResponse(
-    #         {
-    #             'error': True,
-    #             'error_message': 'Method not allowed',
-    #             'status': HttpResponse.status_code
-    #         }
-    #     )
+    return JsonResponse(user)
 
-
-
-# # @require_POST
-# def signup(request):
-#     if request.method == 'POST':
-#         data = RegisterForm(request.POST)
-#         if data.is_valid():
-#             data.save()
-#             # user = Teacher.objects.create(**data)
-#             # user.save()
-
-#         # elif data.current_class:
-#         #     user = Student.objects.create(**data)
-#         # else:
-#         #     user = User.objects.create(**data)
-#             return redirect('/index')
-#     else:
-#         data = RegisterForm()
-#     return render(request, 'registration/sign_up.html', {'data': data})
+"""
