@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 # from django.views.decorators.http import require_POST
-from main.models import User, Teacher, Student
+from main.models import CustomUser, Teacher, Student
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from .forms import RegisterForm
 from django.contrib.auth.forms import UserCreationForm
@@ -25,7 +25,7 @@ def signup(request):
             elif request.POST.get('role') == 'Student':
                 Student.objects.create(user=user)
             else:
-                User.objects.create(user=user)
+                CustomUser.objects.create(user=user)
             return redirect('/index')
     else:
         data = RegisterForm()

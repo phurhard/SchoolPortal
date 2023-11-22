@@ -1,23 +1,24 @@
 from django.db import models
 from django.forms.models import model_to_dict
 import json
-# from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser
 # Create your models here.
 """subjects should be referenced to classes, on student view send the subjects
 in a table, on teachers view it should also be a table but of students names.
 users shoudld inherit from django users model"""
 
 
-class User(models.Model):
+class CustomUser(AbstractBaseUser):
     ROLE = [
-        ('TEACHER', 'teacher'),
-        ('STUDENT', 'student'),
+        ('Teacher', 'Teacher'),
+        ('Student', 'Student'),
     ]
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    other_name = models.CharField(max_length=255, default=None, null=True)
+    other_name = models.CharField(max_length=255, default='', null=True)
     password = models.CharField(max_length=255)
-    role = models.CharField(max_length=50)
+    password_confirmation = models.CharField(max_length=200, default='', null=False)
+    role = models.CharField(max_length=10, choices=ROLE)
     phone_number = models.CharField(max_length=20)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -40,7 +41,7 @@ class User(models.Model):
         ordering = ['first_name']
 
 
-class Teacher(User):
+class Teacher(CustomUser):
     level = models.IntegerField(verbose_name='worker_level', default=1)
     salary = models.DecimalField(max_digits=6, decimal_places=2,
                                  default=000.00)
@@ -69,7 +70,7 @@ class Subject(models.Model):
         }
 
 
-class Student(User):
+class Student(CustomUser):
     current_class = models.ForeignKey("Grade", on_delete=models.SET_NULL,
                                       null=True)
     subjects = models.ManyToManyField('Subject')
