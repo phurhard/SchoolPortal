@@ -45,7 +45,17 @@ INSTALLED_APPS = [
     'Authentication.apps.AuthenticationConfig',
     'crispy_forms',
     'crispy_bootstrap5',
+    'drf_yasg',
 ]
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS' :{
+        'Basic': {
+            'type': 'basic',
+           'scheme': 'basic',
+        }
+    }
+}
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 

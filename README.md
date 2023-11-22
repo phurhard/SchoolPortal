@@ -17,6 +17,9 @@ The school portal is a django project that help provides a digital presence for 
 
 At the moment, the app will be built with anyone able to signup and login, but permissioins will be set so only authorized users(students/teacher) of the school will be able to acess the features of the app.
 
+
+Documentation of the endpoints can be viewed at: [swagger](http://127.0.0.1:8000/swagger/)
+
 ### Progress
 
 At the moment, the school portal is still in its development(incubation) state, with just quite a few of the tasks done.

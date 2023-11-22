@@ -42,7 +42,8 @@ class User(models.Model):
 
 class Teacher(User):
     level = models.IntegerField(verbose_name='worker_level', default=1)
-    salary = models.DecimalField(max_digits=6, decimal_places=2, default=000.00)
+    salary = models.DecimalField(max_digits=6, decimal_places=2,
+                                 default=000.00)
 
     def __str__(self):
         return self.first_name + '' + self.last_name
@@ -77,7 +78,8 @@ class Student(User):
         return json.dumps(model_to_dict(self))
 
     def __str__(self):
-        return self.first_name.__str__() + self.current_class.__str__() + self.subjects.__str__()
+        return self.first_name.__str__() + self.current_class.__str__() +\
+    self.subjects.__str__()
 
 
 class Grade(models.Model):
