@@ -2,6 +2,8 @@ from django.db import models
 from django.forms.models import model_to_dict
 import json
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 # Create your models here.
 """subjects should be referenced to classes, on student view send the subjects
 in a table, on teachers view it should also be a table but of students names.
@@ -23,7 +25,6 @@ class CustomUserManager(BaseUserManager):
         extra_params.setdefault('is_superuser', True)
         
         return self.create_user(identifier, **extra_params)
-
 
 class CustomUser(AbstractBaseUser):
     ROLE_CHOICES = [
@@ -64,39 +65,46 @@ class CustomUser(AbstractBaseUser):
     objects = CustomUserManager()
     
     USERNAME_FIELD = 'identifier'
-    
+
+@receiver(post_save, sender=CustomUser)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        if instance.role == 'Teacher':
+            Teacher.objects.create(email=instance.email, admin=instance)
+        elif instance.role == 'Student':
+            Student.objects.create(current_class=None, admin=instance)
+
+@receiver(post_save, sender=CustomUser)
+def save_user_profile(sender, instance, **kwargs):
+    if instance.role == 'Teacher':
+        instance.teacher.save()
+    elif instance.role == 'Student':
+        instance.student.save()
 
 class Teacher(CustomUser):
     email = models.EmailField(max_length=254)
     level = models.IntegerField(verbose_name='worker_level', default=1)
-    salary = models.DecimalField(max_digits=6, decimal_places=2,
-                                 default=000.00)
+    salary = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
 
     def __str__(self):
         return self.get_full_name()
     
     EMAIL_FIELD = 'email'
 
-
 class Student(CustomUser):
-    current_class = models.ForeignKey("Grade", on_delete=models.SET_NULL,
-                                      null=True)
+    current_class = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True)
     subjects = models.ManyToManyField('Subject')
 
     def to_json(self):
         return json.dumps(model_to_dict(self))
 
     def __str__(self):
-        return self.first_name.__str__() + self.current_class.__str__() +\
-    self.subjects.__str__()
-
+        return self.get_full_name() + str(self.current_class) + str(self.subjects)
 
 class Subject(models.Model):
     subject_name = models.CharField(max_length=100)
-    subject_class = models.ForeignKey("Grade", related_name='grade',
-                                      on_delete=models.CASCADE)
-    teacher_name = models.ForeignKey("Teacher", on_delete=models.SET_NULL,
-                                     null=True)
+    subject_class = models.ForeignKey("Grade", related_name='grade', on_delete=models.CASCADE)
+    teacher_name = models.ForeignKey("Teacher", on_delete=models.SET_NULL, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 
@@ -104,12 +112,7 @@ class Subject(models.Model):
         ordering = ['subject_name']
 
     def __str__(self):
-        return {
-            'subject_name': self.subject_name,
-            'subject_class': self.subject_class,
-            'teacher_name': self.teacher_name
-        }
-
+        return f'{self.subject_name} ({self.subject_class}) - {self.teacher_name}'
 
 class Grade(models.Model):
     category = models.CharField(max_length=200)
@@ -122,11 +125,10 @@ class Grade(models.Model):
         }
 
     def __str__(self):
-        return self.category + ':' + self.name
+        return f'{self.category}: {self.name}'
 
     def __unicode__(self):
         return self.name
-
 
 class ContinousAssessment(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
