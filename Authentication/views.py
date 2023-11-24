@@ -2,9 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 # from django.views.decorators.http import require_POST
 from main.models import CustomUser, Teacher, Student
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from .forms import RegisterForm
-from django.contrib.auth.forms import UserCreationForm
+# from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from .forms import SignupForm, TeacherSignUpForm, StudentSignUpForm
 # Create your views here.
 
 
@@ -15,20 +14,26 @@ def index(request):
 # @require_POST
 def signup(request):
     if request.method == 'POST':
-        data = RegisterForm(request.POST)
+        data = SignupForm(request.POST)
         if data.is_valid():
-            user = data.save()
-            # data.save(commit=False)
-            if request.POST.get('role') == 'Teacher':
-                Teacher.objects.create(user=user)
-                # Teacher.objects.create(user=user)
-            elif request.POST.get('role') == 'Student':
-                Student.objects.create(user=user)
-            else:
-                CustomUser.objects.create(user=user)
-            return redirect('/index')
+            role = data.cleaned_data['role']
+            if role == 'Teacher':
+                teacher_form = TeacherSignUpForm(request.POST)
+                if teacher_form.is_valid():
+                    user = data.save()
+                    teacher = teacher_form.save(commit=False)
+                    teacher.user = user
+                    teacher.save()
+            elif role == 'Student':
+                student_form = StudentSignUpForm(request.POST)
+                if student_form.is_valid():
+                    user = data.save()
+                    student = student_form.save(commit=False)
+                    student.user = user
+                    student.save()
+            return redirect('/home/')
     else:
-        data = RegisterForm()
+        data = SignupForm()
     return render(request, 'registration/sign_up.html', {'data': data})
 
 """

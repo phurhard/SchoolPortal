@@ -8,8 +8,25 @@ in a table, on teachers view it should also be a table but of students names.
 users shoudld inherit from django users model"""
 
 
+class CustomUserManager(BaseUserManager):
+    def create_user(self, identifier, password=None, **extra_params):
+        if not identifier:
+            raise ValueError('You must provide a valid id')
+        
+        new_user = self.model(identifier=identifier, **extra_params)
+        new_user.set_password(password)
+        new_user.save()
+        return new_user
+    
+    def create_superuser(self, identifier, **extra_params):
+        extra_params.setdefault('is_staff', True)
+        extra_params.setdefault('is_superuser', True)
+        
+        return self.create_user(identifier, **extra_params)
+
+
 class CustomUser(AbstractBaseUser):
-    ROLE = [
+    ROLE_CHOICES = [
         ('Teacher', 'Teacher'),
         ('Student', 'Student'),
     ]
@@ -18,9 +35,8 @@ class CustomUser(AbstractBaseUser):
     other_name = models.CharField(max_length=255, default='', null=True)
     identifier = models.CharField(max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
-    # password = models.CharField(max_length=255)
-    # password_confirmation = models.CharField(max_length=200, default='', null=False)
-    role = models.CharField(max_length=10, choices=ROLE)
+    is_staff = models.BooleanField(default=False)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     phone_number = models.CharField(max_length=20)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -36,23 +52,19 @@ class CustomUser(AbstractBaseUser):
             'updated_on': self.updated_on
         }
 
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name}"
+    
     def __str__(self):
-        return self.first_name + ' ' + self.last_name
+        return self.get_full_name()
 
     class Meta:
         ordering = ['first_name']
         
+    objects = CustomUserManager()
+    
     USERNAME_FIELD = 'identifier'
     
-
-class CustomUserManager(BaseUserManager):
-    def create_user(self, first_name=None, last_name=None, email=None, password=None):
-        new_user = CustomUser.objects.create(first_name=first_name, last_name=last_name, email=last_name, password=password)
-        return new_user
-    
-    def create_superuser(self, first_name=None, last_name=None, email=None, password=None):
-        new_user = CustomUser.objects.create(first_name=first_name, last_name=last_name, email=last_name, password=password)
-        return new_user
 
 class Teacher(CustomUser):
     email = models.EmailField(max_length=254)
@@ -61,9 +73,22 @@ class Teacher(CustomUser):
                                  default=000.00)
 
     def __str__(self):
-        return self.first_name + '' + self.last_name
+        return self.get_full_name()
     
     EMAIL_FIELD = 'email'
+
+
+class Student(CustomUser):
+    current_class = models.ForeignKey("Grade", on_delete=models.SET_NULL,
+                                      null=True)
+    subjects = models.ManyToManyField('Subject')
+
+    def to_json(self):
+        return json.dumps(model_to_dict(self))
+
+    def __str__(self):
+        return self.first_name.__str__() + self.current_class.__str__() +\
+    self.subjects.__str__()
 
 
 class Subject(models.Model):
@@ -84,19 +109,6 @@ class Subject(models.Model):
             'subject_class': self.subject_class,
             'teacher_name': self.teacher_name
         }
-
-
-class Student(CustomUser):
-    current_class = models.ForeignKey("Grade", on_delete=models.SET_NULL,
-                                      null=True)
-    subjects = models.ManyToManyField('Subject')
-
-    def to_json(self):
-        return json.dumps(model_to_dict(self))
-
-    def __str__(self):
-        return self.first_name.__str__() + self.current_class.__str__() +\
-    self.subjects.__str__()
 
 
 class Grade(models.Model):

@@ -150,3 +150,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH = False 
 
 LOGIN_REDIRECT_URL = '/home/'
+
+LOGIN_URL = '/login/'
+
+LOGOUT_REDIRECT_URL = '/home/'
