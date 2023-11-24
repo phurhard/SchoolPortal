@@ -5,5 +5,4 @@ from django.http import JsonResponse
 
 
 def index(request):
-    return JsonResponse(
-        {'Hello' : 'world'})
+    return render(request, 'home.html')

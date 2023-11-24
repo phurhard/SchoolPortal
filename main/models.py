@@ -1,7 +1,7 @@
 from django.db import models
 from django.forms.models import model_to_dict
 import json
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 # Create your models here.
 """subjects should be referenced to classes, on student view send the subjects
 in a table, on teachers view it should also be a table but of students names.
@@ -16,8 +16,10 @@ class CustomUser(AbstractBaseUser):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     other_name = models.CharField(max_length=255, default='', null=True)
-    password = models.CharField(max_length=255)
-    password_confirmation = models.CharField(max_length=200, default='', null=False)
+    identifier = models.CharField(max_length=255, unique=True)
+    is_active = models.BooleanField(default=True)
+    # password = models.CharField(max_length=255)
+    # password_confirmation = models.CharField(max_length=200, default='', null=False)
     role = models.CharField(max_length=10, choices=ROLE)
     phone_number = models.CharField(max_length=20)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -39,15 +41,29 @@ class CustomUser(AbstractBaseUser):
 
     class Meta:
         ordering = ['first_name']
+        
+    USERNAME_FIELD = 'identifier'
+    
 
+class CustomUserManager(BaseUserManager):
+    def create_user(self, first_name=None, last_name=None, email=None, password=None):
+        new_user = CustomUser.objects.create(first_name=first_name, last_name=last_name, email=last_name, password=password)
+        return new_user
+    
+    def create_superuser(self, first_name=None, last_name=None, email=None, password=None):
+        new_user = CustomUser.objects.create(first_name=first_name, last_name=last_name, email=last_name, password=password)
+        return new_user
 
 class Teacher(CustomUser):
+    email = models.EmailField(max_length=254)
     level = models.IntegerField(verbose_name='worker_level', default=1)
     salary = models.DecimalField(max_digits=6, decimal_places=2,
                                  default=000.00)
 
     def __str__(self):
         return self.first_name + '' + self.last_name
+    
+    EMAIL_FIELD = 'email'
 
 
 class Subject(models.Model):
