@@ -8,11 +8,36 @@ from .forms import SignupForm, TeacherSignUpForm, StudentSignUpForm
 
 
 def index(request):
-    return HttpResponse('Authentication')
+    return render(request, 'Authentication/index.html')
 
+def signupTeacher(request):
+    if request.method == 'POST':
+        data = TeacherSignUpForm(request.POST)
+        if data.is_valid():
+            user = data.save()
+        else:
+            redirect('auth/staff')
+        redirect('staff/')
+    else:
+        data = TeacherSignUpForm()
+    return render(request, 'registration/teacherPage.html', {'data': data})
+    
+    
+def signupStudent(request):
+    if request.method == 'POST':
+        data = StudentSignUpForm(request.POST)
+        if data.is_valid():
+            user = data.save()
+        else:
+            redirect('auth/student')
+        redirect('student/')
+    else:
+        data = StudentSignUpForm()
+    return render(request, 'registration/studentPage.html', {'data': data})
 
+'''
 # @require_POST
-def signup(request):
+def signup_teacher(request):
     if request.method == 'POST':
         data = SignupForm(request.POST)
         if data.is_valid():
@@ -27,7 +52,9 @@ def signup(request):
             elif role == 'Student':
                 student_form = StudentSignUpForm(request.POST)
                 if student_form.is_valid():
-                    user = data.save()
+                    user = student_form.save()
+                    print(f'user {user}')
+                    print(f'student form {student_form}')
                     student = student_form.save(commit=False)
                     student.user = user
                     student.save()
@@ -35,34 +62,4 @@ def signup(request):
     else:
         data = SignupForm()
     return render(request, 'registration/sign_up.html', {'data': data})
-
-"""
-@csrf_exempt
-def signup(request):
-    if request.method == 'POST':
-        user = {
-            'first_name': request.POST.get('first_name'),
-            'last_name': request.POST.get('last_name'),
-            'other_name': request.POST.get('other_name'),
-            'password': request.POST.get('password'),
-            'role': request.POST.get('role'),
-            'phone_number': request.POST.get('phone_number')
-        }
-        # will use the usercreation form here for later refactoring
-        # validator(user)
-
-        if request.POST.get('role') == 'Student':
-            Student.objects.create(**user)
-            print('this is a student')
-        elif request.POST.get('role') == 'Teacher':
-            Teacher.objects.create(**user)
-            print('this is a teacher')
-        else:
-            print('this is a normal user which can be an administrator')
-            User.objects.create(**user)
-    else:
-        user = UserCreationForm()
-        # print(user)
-    return JsonResponse(user)
-
-"""
+'''

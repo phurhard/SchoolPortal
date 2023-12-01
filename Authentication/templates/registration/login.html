@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<form method="post">
+<form method="post" class='form'>
     {% csrf_token %}{{form|crispy}}
     <p>Don't have an account? Create one <a href="/sign_up">Here</a>!</p>
     <button type="submit" class="btn btn-success">Login</button>

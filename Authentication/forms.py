@@ -13,18 +13,21 @@ class SignupForm(BaseUserCreationForm):
 
 class TeacherSignUpForm(SignupForm):
     email = forms.EmailField()
-    level = forms.IntegerField()
-    salary = forms.DecimalField()
     
     
     class Meta(SignupForm.Meta):
-        fields = SignupForm.Meta.fields + ['email', 'level', 'salary']
+        model = Teacher
+        fields = SignupForm.Meta.fields + ['email']
         
 
 class StudentSignUpForm(SignupForm):
-    current_class = forms.ModelChoiceField(queryset=Grade.objects.all())
-    subjects = forms.ModelMultipleChoiceField(queryset=Subject.objects.all())
+    # current_class = forms.ModelChoiceField(queryset=Grade.objects.all())
+    # subjects = forms.ModelMultipleChoiceField(queryset=Subject.objects.all())
+    
+    class Meta(SignupForm.Meta):
+        model = Subject
+        fields = SignupForm.Meta.fields
     
     
     class Meta(SignupForm.Meta):
-        fields = SignupForm.Meta.fields + ['current_class', 'subjects']
+        fields = SignupForm.Meta.fields #+ ['current_class', 'subjects']

@@ -1,0 +1,13 @@
+{% extends 'Authentication/base.html' %}
+{% block content %}
+{% if teachers %}
+<ul>
+{% for teacher in teachers %}
+<li> {{ teacher }}</li>
+<p>there is a teacher here</p>
+{% endfor %}
+</ul>
+{% else %}
+<p>No teacher data available</p>
+{% endif %}
+{% endblock %}

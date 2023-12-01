@@ -9,7 +9,8 @@ from .views import (
 urlpatterns = [
     path('home/', views.index, name='index'),
     path('', include('Authentication.urls')),
-    #path('', index, name='index'),
+    path('', include('Staff.urls')),
+    path('', include('Student.urls')),
     path('teachers/', teacher_list, name='teacher_list'),
     path('students/', student_list, name='student_list'),
     path('subjects/', subject_list, name='subject_list'),

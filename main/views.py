@@ -1,8 +1,11 @@
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Teacher, Student, Subject, Grade, ContinousAssessment
 
+
 def index(request):
+    '''Landing page of the school portal'''
     return render(request, 'home.html')
 
 def teacher_list(request):

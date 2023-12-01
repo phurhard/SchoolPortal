@@ -147,10 +147,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-APPEND_SLASH = False 
+APPEND_SLASH = True 
 
 LOGIN_REDIRECT_URL = '/home/'
 
 LOGIN_URL = '/login/'
 
-LOGOUT_REDIRECT_URL = '/home/'
+LOGOUT_REDIRECT_URL = '/login/'
