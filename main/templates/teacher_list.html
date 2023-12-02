@@ -4,6 +4,9 @@
 <ul>
 {% for teacher in teachers %}
 <li> {{ teacher }}</li>
+{% for subject in teacher.subject_set.all %}
+<li>{{ subject.subject_name }} {{ subject.subject_class }}</li>
+{% endfor %}
 <p>there is a teacher here</p>
 {% endfor %}
 </ul>

@@ -47,7 +47,7 @@ class CustomUser(AbstractBaseUser):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'other_name': self.other_name,
-            'role': self.role,
+            # 'role': self.role,
             'phone_number': self.phone_number,
             'created_on': self.created_on,
             'updated_on': self.updated_on
@@ -61,6 +61,7 @@ class CustomUser(AbstractBaseUser):
 
     class Meta:
         ordering = ['first_name']
+        # abstract = True
         
     objects = CustomUserManager()
     
@@ -103,7 +104,7 @@ class Student(CustomUser):
 
 class Subject(models.Model):
     subject_name = models.CharField(max_length=100)
-    subject_class = models.ForeignKey("Grade", related_name='grade', on_delete=models.CASCADE)
+    subject_class = models.ForeignKey("Grade", related_name='subjects', on_delete=models.CASCADE)
     teacher_name = models.ForeignKey("Teacher", on_delete=models.SET_NULL, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
