@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main.apps.MainConfig',
     'Authentication.apps.AuthenticationConfig',
+    'Staff.apps.StaffConfig',
+    'Student.apps.StudentConfig',
     'crispy_forms',
     'crispy_bootstrap5',
     'drf_yasg',
@@ -149,8 +151,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 APPEND_SLASH = True 
 
-LOGIN_REDIRECT_URL = '/home/'
+LOGIN_REDIRECT_URL = '/home'
 
-LOGIN_URL = '/login/'
+LOGIN_URL = '/login'
 
-LOGOUT_REDIRECT_URL = '/login/'
+LOGOUT_REDIRECT_URL = '/login'

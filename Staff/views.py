@@ -4,4 +4,4 @@ from django.shortcuts import render
 
 def index(request):
     '''this is the landing page for staffs'''
-    return render(request, 'index.html')
+    return render(request, 'Staff/index.html')

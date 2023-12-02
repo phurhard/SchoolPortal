@@ -34,10 +34,10 @@ class CustomUser(AbstractBaseUser):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     other_name = models.CharField(max_length=255, default='', null=True)
-    identifier = models.CharField(max_length=255, unique=True)
+    # identifier = models.CharField(max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    # role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     phone_number = models.CharField(max_length=20)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -64,7 +64,7 @@ class CustomUser(AbstractBaseUser):
         
     objects = CustomUserManager()
     
-    USERNAME_FIELD = 'identifier'
+    USERNAME_FIELD = 'first_name'
 
 @receiver(post_save, sender=CustomUser)
 def create_user_profile(sender, instance, created, **kwargs):

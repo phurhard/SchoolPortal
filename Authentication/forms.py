@@ -9,7 +9,7 @@ class SignupForm(BaseUserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ["first_name", "last_name", "other_name", "role", "phone_number"]
+        fields = ["first_name", "last_name", "other_name", "phone_number"]
 
 class TeacherSignUpForm(SignupForm):
     email = forms.EmailField()
@@ -25,9 +25,10 @@ class StudentSignUpForm(SignupForm):
     # subjects = forms.ModelMultipleChoiceField(queryset=Subject.objects.all())
     
     class Meta(SignupForm.Meta):
-        model = Subject
+        model = Student
         fields = SignupForm.Meta.fields
+
+class LoginForm(forms.Form):
+    identifier = forms.CharField(label='identifier', max_length=50)
+    password = forms.CharField(max_length=20)
     
-    
-    class Meta(SignupForm.Meta):
-        fields = SignupForm.Meta.fields #+ ['current_class', 'subjects']
