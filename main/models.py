@@ -1,7 +1,7 @@
 from django.db import models
 from django.forms.models import model_to_dict
 import json
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 # Create your models here.
@@ -26,18 +26,17 @@ class CustomUserManager(BaseUserManager):
         
         return self.create_user(identifier, **extra_params)
 
-class CustomUser(AbstractBaseUser):
-    ROLE_CHOICES = [
-        ('Teacher', 'Teacher'),
-        ('Student', 'Student'),
-    ]
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+class CustomUser(AbstractUser):
+    # ROLE_CHOICES = [
+    #     ('Teacher', 'Teacher'),
+    #     ('Student', 'Student'),
+    # ]
+    # first_name = models.CharField(max_length=255)
+    # last_name = models.CharField(max_length=255)
     other_name = models.CharField(max_length=255, default='', null=True)
-    # identifier = models.CharField(max_length=255, unique=True)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    # role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    reg_num = models.CharField(max_length=255, unique=True)
+    # is_active = models.BooleanField(default=True)
+    # is_staff = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=20)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -63,34 +62,35 @@ class CustomUser(AbstractBaseUser):
         ordering = ['first_name']
         # abstract = True
         
-    objects = CustomUserManager()
+    # objects = CustomUserManager()
     
-    USERNAME_FIELD = 'first_name'
+    USERNAME_FIELD = 'reg_num'
+    REQUIRED_FIELDS = []
 
-@receiver(post_save, sender=CustomUser)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        if instance.role == 'Teacher':
-            Teacher.objects.create(email=instance.email, admin=instance)
-        elif instance.role == 'Student':
-            Student.objects.create(current_class=None, admin=instance)
+# @receiver(post_save, sender=CustomUser)
+# def create_user_profile(sender, instance, created, **kwargs):
+#     if created:
+#         if instance.role == 'Teacher':
+#             Teacher.objects.create(email=instance.email, admin=instance)
+#         elif instance.role == 'Student':
+#             Student.objects.create(current_class=None, admin=instance)
 
-@receiver(post_save, sender=CustomUser)
-def save_user_profile(sender, instance, **kwargs):
-    if instance.role == 'Teacher':
-        instance.teacher.save()
-    elif instance.role == 'Student':
-        instance.student.save()
+# @receiver(post_save, sender=CustomUser)
+# def save_user_profile(sender, instance, **kwargs):
+#     if instance.role == 'Teacher':
+#         instance.teacher.save()
+#     elif instance.role == 'Student':
+#         instance.student.save()
 
 class Teacher(CustomUser):
-    email = models.EmailField(max_length=254)
+    # email = models.EmailField(max_length=254)
     level = models.IntegerField(verbose_name='worker_level', default=1)
     salary = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
 
     def __str__(self):
         return self.get_full_name()
     
-    EMAIL_FIELD = 'email'
+    # EMAIL_FIELD = 'email'
 
 class Student(CustomUser):
     current_class = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True)

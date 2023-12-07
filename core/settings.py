@@ -43,13 +43,20 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main.apps.MainConfig',
     'Authentication.apps.AuthenticationConfig',
+    'corsheaders',
     'Staff.apps.StaffConfig',
     'Student.apps.StudentConfig',
     'crispy_forms',
     'crispy_bootstrap5',
+    'rest_framework_simplejwt',
     'drf_yasg',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS' :{
         'Basic': {
@@ -66,6 +73,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap5'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -149,10 +157,15 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-APPEND_SLASH = True 
+APPEND_SLASH = False
+
+AUTH_USER_MODEL = 'main.CustomUser'
 
 LOGIN_REDIRECT_URL = '/home'
 
 LOGIN_URL = '/login'
 
 LOGOUT_REDIRECT_URL = '/login'
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
