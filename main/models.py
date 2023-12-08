@@ -15,16 +15,16 @@ class CustomUserManager(BaseUserManager):
         if not identifier:
             raise ValueError('You must provide a valid id')
         
-        new_user = self.model(identifier=identifier, **extra_params)
+        new_user = self.model(reg_num=identifier, **extra_params)
         new_user.set_password(password)
         new_user.save()
         return new_user
     
-    def create_superuser(self, identifier, **extra_params):
+    def create_superuser(self, reg_num, **extra_params):
         extra_params.setdefault('is_staff', True)
         extra_params.setdefault('is_superuser', True)
         
-        return self.create_user(identifier, **extra_params)
+        return self.create_user(reg_num, **extra_params)
 
 class CustomUser(AbstractUser):
     # ROLE_CHOICES = [
@@ -61,7 +61,7 @@ class CustomUser(AbstractUser):
         ordering = ['first_name']
         # abstract = True
         
-    # objects = CustomUserManager()
+    objects = CustomUserManager()
     
     USERNAME_FIELD = 'reg_num'
     REQUIRED_FIELDS = []
