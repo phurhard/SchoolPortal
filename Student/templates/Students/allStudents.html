@@ -1,24 +1,18 @@
 {% extends 'main/base.html' %}
 {% block content %}
-<h1>Teachers</h1>
-{% if teachers %}
+<h1>Students</h1>
+{% if students %}
 <table>
-    {% comment %} <tr>
-        <td>First Name</td>
-        <td>Last Name</td>
-        <td>Subjects</td>
-        This should be the headers
-
-    </tr> {% endcomment %}
-{% for teacher in teachers %}
+{% for student in students %}
     <tr>
-        <td>{{ teacher.get_full_name }}</td>
+        <td>{{ student.get_full_name }}</td>
         {% comment %} <td>{{ teacher.last_name }}</td> {% endcomment %}
-        <td>{{ teacher.reg_num }}</td>
+        <td>{{ student.reg_num }}</td>
+        <td>{{ student.grade }}</td>
         
         <td>
             <ul>
-            {% for subject in teacher.subject_set.all%}
+            {% for subject in student.subject_set.all %}
                 <li>{{ subject }}</li>
             {% endfor %}
             </ul>

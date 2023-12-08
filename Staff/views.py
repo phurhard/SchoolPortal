@@ -19,8 +19,8 @@ def teachers_list(request):
     if request.user.is_superuser and request.user.is_authenticated:
         """Only accesible to an admin"""
         all_teachers = Teacher.objects.all()
-        for teacher in all_teachers:
-            subjects = teacher.subject_set.all()
+        # for teacher in all_teachers:
+            # subjects = teacher.subject_set.all()
             # print(f'{teacher.get_full_name()} {teacher.reg_num} {subjects}')
         return render(request, 'Staff/allTeachers.html', {'teachers': all_teachers})
     else:
