@@ -1,0 +1,12 @@
+{% extends "main/base.html" %}
+{% block content %}
+<h2>Teacher Profile</h2>
+<p>Name: {{ user.get_full_name }}</p>
+<p>Email: {{ user.email }}</p>
+<p>Subjects:</p>
+<ul>
+{% for subject in user.teacher.subjects %}
+<li>{{ subject }}</li>
+{% endfor %}
+</ul>
+{% endblock %}

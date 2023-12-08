@@ -35,8 +35,7 @@ class CustomUser(AbstractUser):
     # last_name = models.CharField(max_length=255)
     other_name = models.CharField(max_length=255, default='', null=True)
     reg_num = models.CharField(max_length=255, unique=True)
-    # is_active = models.BooleanField(default=True)
-    # is_staff = models.BooleanField(default=False)
+    username = None
     phone_number = models.CharField(max_length=20)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -46,7 +45,7 @@ class CustomUser(AbstractUser):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'other_name': self.other_name,
-            # 'role': self.role,
+            'reg_num': self.reg_num,
             'phone_number': self.phone_number,
             'created_on': self.created_on,
             'updated_on': self.updated_on
@@ -143,7 +142,7 @@ class ContinousAssessment(models.Model):
     def to_json(self):
         return {
             'subject': self.subject.subject_name,
-            'student': self.student.name,
+            'student': self.student.get_full_name,
             'first_ca': self.first_ca,
             'second_ca': self.second_ca,
             'third_ca': self.third_ca,

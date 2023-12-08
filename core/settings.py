@@ -52,10 +52,17 @@ INSTALLED_APPS = [
     'drf_yasg',
 ]
 
+AUTH_USER_MODEL = 'main.CustomUser'
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+        'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.TemplateHTMLRenderer',  # Add this line for HTML rendering
+    ),
+    
 }
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS' :{
@@ -103,7 +110,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 CSRF_TRUSTED_ORIGINS = ['http://*', 'http://localhost']
 # remove this after development release
-# AUTH_USER_MODEL = 'main.User'
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -157,7 +164,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-APPEND_SLASH = False
+APPEND_SLASH = True
 
 AUTH_USER_MODEL = 'main.CustomUser'
 

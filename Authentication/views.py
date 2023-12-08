@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.views import LoginView
+from django.contrib import messages
+from django.contrib.auth import authenticate, logout
+from django.contrib.auth import login as auth_login
 from django.http import JsonResponse, HttpResponse
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 # from django.views.decorators.http import require_POST
 from main.models import CustomUser, Teacher, Student
 from rest_framework.views import APIView
@@ -8,10 +12,12 @@ from .forms import LoginForm, TeacherSignUpForm, StudentSignUpForm
 from .serializers import UserSerializer
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
-import jwt, datetime
+import jwt
+import datetime
+from .matric_no_generator import matric_no
 # Create your views here.
 
-
+'''
 class SignUpView(APIView):
     def post(self, request):
         serializer = UserSerializer(data = request.data)
@@ -81,11 +87,13 @@ def signupTeacher(request):
     if request.method == 'POST':
         data = TeacherSignUpForm(request.POST)
         if data.is_valid():
-            user = data.save()
-            print(user.id)
+            user = data.save(commit=False)
+            user.reg_num = matric_no(request, user)
+            user.save()
+            print(user.to_json())
             return redirect('/login')
         else:
-            return redirect('auth/staff')
+            return redirect('/auth/staff')
     else:
         data = TeacherSignUpForm()
     return render(request, 'registration/teacherPage.html', {'data': data})
@@ -95,12 +103,14 @@ def signupStudent(request):
     if request.method == 'POST':
         data = StudentSignUpForm(request.POST)
         if data.is_valid():
-            user = data.save()
-            print(user.id)
+            user = data.save(commit=False)
+            user.reg_num = matric_no(request, user)
+            user.save()
+            # print(user.id)
         
             return redirect('/login')
         else:
-            return redirect('auth/student')
+            return redirect('/auth/student')
     else:
         data = StudentSignUpForm()
     return render(request, 'registration/studentPage.html', {'data': data})
@@ -109,26 +119,38 @@ def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            data = form.cleaned_data.get('identifier')
-            try:
-                user = get_object_or_404(CustomUser, id=data)
-                if user.student:
-                    is_student = True
-                    is_teacher = False
-            except ObjectDoesNotExist:
-                is_student = False
-                is_teacher = True
-            # print(user.__dir__())
+            reg_num = form.cleaned_data.get('Reg_num')
+            password = form.cleaned_data.get('password')
             
-            if (is_student):
-                return redirect('/student')
-            elif (is_teacher):
-                return redirect('/staff')
-            return redirect('/login')
+            user = authenticate(request, reg_num=reg_num, password=password)
+            # print(user)
+            # print(form.cleaned_data)
+            if user is None:
+                
+                form.add_error(None, 'Invalid username or password')
+                return render(request, 'registration/login.html', {'form': form})
+            else:
+                auth_login(request, user)
+                # print(user)
+                print(request.user)
+                try:
+                    # user = get_object_or_404(CustomUser, id=data)
+                    if user.student:
+                        return redirect('/student')
+                except ObjectDoesNotExist:
+                    return redirect('/staff')
+        else:
+            messages.error(request, 'Form is invalid')
     else:
         form = LoginForm()
     return render(request, 'registration/login.html', {'form': form})
-'''
+
+def user_logout(request):
+    logout(request)
+    return redirect('/login')
+
+
+# '''
 '''
 # @require_POST
 def signup_teacher(request):

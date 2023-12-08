@@ -13,14 +13,15 @@ def matric_no(request, data):
     today = datetime.now()
     year = today.strftime('%y')
     school = 'ALIS'
+    number = random.randint(10, 99)
     name = data.first_name[:3]
-    # name = request.user.get('first_name')[:3]
-    try:
-        user = get_object_or_404(CustomUser, id=data)
-        if user.student:
-            all_std = Student.objects.all()
-            std = len(all_std)
-            last_std = all_std[std - 1].id
-    except ObjectDoesNotExist:
-        pass
-    return number
+    # # name = request.user.get('first_name')[:3]
+    # try:
+    #     user = get_object_or_404(CustomUser, id=data)
+    #     if user.student:
+    #         all_std = Student.objects.all()
+    #         std = len(all_std)
+    #         last_std = all_std[std - 1].id
+    # except ObjectDoesNotExist:
+    #     pass
+    return f'{school}:{year}:{number}:{name}'

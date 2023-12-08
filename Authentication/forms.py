@@ -1,6 +1,7 @@
 from django import forms
-from django.contrib.auth.forms import BaseUserCreationForm
+from django.contrib.auth.forms import BaseUserCreationForm, AuthenticationForm
 from main.models import CustomUser, Teacher, Student, Grade, Subject
+from django.utils.translation import gettext_lazy as _
 
 
 class SignupForm(BaseUserCreationForm):
@@ -29,6 +30,17 @@ class StudentSignUpForm(SignupForm):
         fields = SignupForm.Meta.fields
 
 class LoginForm(forms.Form):
-    identifier = forms.CharField(label='identifier', max_length=50)
-    password = forms.CharField(max_length=20)
-    
+    Reg_num = forms.CharField(label='reg_num', max_length=50)
+    password = forms.CharField(
+        label=_("Password"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
+    )
+
+    error_messages = {
+        "invalid_login": _(
+            "Please enter a correct %(username)s and password. Note that both "
+            "fields may be case-sensitive."
+        ),
+        "inactive": _("This account is inactive."),
+    }

@@ -1,12 +1,13 @@
 {% extends 'Authentication/base.html' %}
-{% block title %}login{% endblock %}
+{% block title %}Al-Iman | Login{% endblock %}
 {% load crispy_forms_tags %}
 
 {% block content %}
+
 <form method="post" class='form'>
     {% csrf_token %}
     {{ form }}
-    <p>Don't have an account yet? Create one <a href="/sign_up">Here</a>!</p>
+    <p>Don't have an account yet? Create one <a href="/auth/">Here</a>!</p>
     <button type="submit" class="btn btn-success">Login</button>
 </form>
 {% endblock %}
