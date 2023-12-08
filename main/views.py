@@ -8,10 +8,6 @@ def index(request):
     '''Landing page of the school portal'''
     return render(request, 'home.html')
 
-def teacher_list(request):
-    teachers = Teacher.objects.all()
-    return render(request, 'teacher_list.html', {'teachers': teachers})
-
 def student_list(request):
     students = Student.objects.all()
     return render(request, 'student_list.html', {'students': students})

@@ -1,7 +1,7 @@
 from django.urls import path, include
 from . import views
 from .views import (
-    index, teacher_list, student_list, subject_list, grade_list,
+    index, student_list, subject_list, grade_list,
     continous_assessment_list, teacher_detail, student_detail,
     subject_detail, grade_detail, continous_assessment_detail
 )
@@ -11,7 +11,6 @@ urlpatterns = [
     path('', include('Authentication.urls')),
     path('', include('Staff.urls')),
     path('', include('Student.urls')),
-    path('teachers/', teacher_list, name='teacher_list'),
     path('students/', student_list, name='student_list'),
     path('subjects/', subject_list, name='subject_list'),
     path('grades/', grade_list, name='grade_list'),

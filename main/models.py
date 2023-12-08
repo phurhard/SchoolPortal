@@ -90,6 +90,8 @@ class Teacher(CustomUser):
         return self.get_full_name()
     
     # EMAIL_FIELD = 'email'
+    class Meta:
+        db_table = 'Teacher'
 
 class Student(CustomUser):
     current_class = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True)
@@ -100,6 +102,9 @@ class Student(CustomUser):
 
     def __str__(self):
         return self.get_full_name() + str(self.current_class) + str(self.subjects)
+
+    class Meta:
+        db_table = 'Student'
 
 class Subject(models.Model):
     subject_name = models.CharField(max_length=100)
