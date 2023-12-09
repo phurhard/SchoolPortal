@@ -7,8 +7,6 @@ def student_profile(request):
     '''this is the landing page for student'''
     if not request.user.is_authenticated:
         return redirect('/login')
-    student = request.user
-    print(f'{student.get_full_name()} {student.grade} {student.__dir__()}')
     return render(request, 'Students/studentProfile.html')
 
 def students_list(request):

@@ -6,7 +6,7 @@
 <p>Subjects:</p>
 <ul>
 {% for subject in user.teacher.subject_set.all %}
-<li>{{ subject }}</li>
+<li><a href='/subject/students'>{{ subject }}</a></li>
 {% endfor %}
 </ul>
 {% endblock %}
