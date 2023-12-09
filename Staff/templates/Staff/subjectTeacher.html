@@ -4,15 +4,29 @@
 {% comment %} <h1>{{ subject.name }}</h1> {% endcomment %}
 <h1>Teacher: {{ user }}</h1>
 <h2>Subject/Class: {{ subject.subject_name }} {{ subject.subject_class }}</h2>
-<ul>
+<table class='table col-2 tr'>
+    <tr>
+        <td>student name</td>
+        <td>subject name</td>
+        <td>first CA</td>
+        <td>second CA</td>
+        <td>third CA</td>
+        <td>Exams</td>
+        <td>Total</td>
+
+    </tr>
     {% for student in students %}
-    <li>
-        <span>{{ student.get_full_name }}</span>
+    <tr>
+        <td>{{ student.get_full_name }}</td>
         {% for CA in student.continousassessment_set.all %}
-            {{ CA }}
+            <td>{{ CA.subject.subject_name }}</td>
+            <td>{{ CA.first_ca }}</td>
+            <td>{{ CA.second_ca }}</td>
+            <td>{{ CA.exams }}</td>
+            <td>{{ CA.total }}</td>
         {% endfor %}
         {% comment %} <span>{{ student.continousassessment_set.all }}</span> {% endcomment %}
-    </li>
+    </tr>
     {% endfor %}
-</ul>
+</table>
 {% endblock %}
