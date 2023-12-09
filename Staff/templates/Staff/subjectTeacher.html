@@ -2,5 +2,17 @@
 {% block title %}Al-Iman | My Students{% endblock %}
 {% block content %}
 {% comment %} <h1>{{ subject.name }}</h1> {% endcomment %}
-<h1>{{ user }}</h1>
+<h1>Teacher: {{ user }}</h1>
+<h2>Subject/Class: {{ subject.subject_name }} {{ subject.subject_class }}</h2>
+<ul>
+    {% for student in students %}
+    <li>
+        <span>{{ student.get_full_name }}</span>
+        {% for CA in student.continousassessment_set.all %}
+            {{ CA }}
+        {% endfor %}
+        {% comment %} <span>{{ student.continousassessment_set.all }}</span> {% endcomment %}
+    </li>
+    {% endfor %}
+</ul>
 {% endblock %}

@@ -94,8 +94,8 @@ class Teacher(CustomUser):
         db_table = 'Teacher'
 
 class Student(CustomUser):
-    current_class = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True)
-    subjects = models.ManyToManyField('Subject')
+    current_class: object = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True)
+    subjects: object = models.ManyToManyField('Subject')
 
     def to_json(self):
         return json.dumps(model_to_dict(self))

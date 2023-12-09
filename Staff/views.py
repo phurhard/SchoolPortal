@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from main.models import Teacher
+from main.models import Teacher, Subject, Student
 # Create your views here.
 
 def index(request):
@@ -24,8 +24,9 @@ def teachers_list(request):
         """Return to profile page"""
         return redirect('/staff')
     
-def subjectTeacher(request):
+def subjectTeacher(request, id):
     """Returns the students taking a particular subject"""
-    print(request.user)
-    return render(request, 'Staff/subjectTeacher.html')
+    subject = Subject.objects.get(pk=id)
+    students = Student.objects.filter(subjects=subject)
+    return render(request, 'Staff/subjectTeacher.html', {'students': students, 'subject': subject})
     # pass
