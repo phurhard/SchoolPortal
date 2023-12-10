@@ -17,7 +17,7 @@ def students_list(request) -> HttpResponse | HttpResponseRedirect | HttpResponse
         return render(request=request, template_name='Students/allStudents.html', context={'students': students})
     else:
         return redirect('/student')
-def results(request, id) -> None:
+def results(request, id) -> HttpResponse:
     '''Returns the result of the specific student'''
     student: Student = get_object_or_404(Student, id=id)
-    subjects = get_list_or_404(Subject, student=id)
+    return render(request, 'Students/results.html', {'student': student})

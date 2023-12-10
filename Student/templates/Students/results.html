@@ -1,16 +1,37 @@
 {% extends "main/base.html" %}
 {% block content %}
+{% if student %}
     <div>
-        <p><b>Name: </b>{{ user.get_full_name }}</p>
-        <p><b>Reg_Num: </b>{{ user.reg_num }}</p>
-        <p><b>Class: </b>{{ user.student.current_class }}</p>
+        <p><b>Name: </b>{{ student.get_full_name }}</p>
+        <p><b>Reg_Num: </b>{{ student.reg_num }}</p>
+        <p><b>Class: </b>{{ student.current_class }}</p>
         {% comment %} <p><b>: </b>{{ user.get_full_name }}</p> {% endcomment %}
     </div>
-    {% for subject in subjects %}
-    <table>
-        <tr>
-            <td></td>
-        </tr>
-
+    <table class="table">
+        <thead>
+            <th>Subject Name</th>
+            <th>First CA</th>
+            <th>Second CA</th>
+            <th>Third CA</th>
+            <th>Exams</th>
+            <th>Total</th>
+        </thead>
+        <tbody>
+            {% for subject in student.subjects.all %}
+                {% for ca in subject.continousassessment_set.all %}
+                    <tr>
+                        <td>{{ ca.subject.subject_name}}</td>
+                        <td>{{ ca.first_ca }}</td>
+                        <td>{{ ca.second_ca }}</td>
+                        <td>{{ ca.third_ca }}</td>
+                        <td>{{ ca.exams }}</td>
+                        <td>{{ ca.total }}</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}    
+        </tbody>
     </table>
+{% else %}
+<p>Please <a href="{% url 'login' %}">login</a> and try again</p>
+{% endif %}
 {% endblock %}

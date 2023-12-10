@@ -5,7 +5,7 @@
     <p>Name: {{ user.get_full_name }}</p>
     <p>Reg_Num: {{ user.reg_num }}</p>
     <p>Class: {{ user.student.current_class }}</p>
-    <p><a href="{% url 'student_result' user.student.id %}">Result</a></p>
+    <p><a href="{% url 'students_result' user.student.id %}">Result</a></p>
 </div>
 <p>Subjects:</p>
 <table class="table">
