@@ -2,7 +2,7 @@
 {% block title %}Al-Iman | My Students{% endblock %}
 {% block content %}
 {% comment %} <h1>{{ subject.name }}</h1> {% endcomment %}
-<h1>Teacher: {{ user }}</h1>
+<h1>Teacher: {{ subject.teacher_name }}</h1>
 <h2>Subject/Class: {{ subject.subject_name }} {{ subject.subject_class }}</h2>
 <table class='table'>
     <thead>
@@ -13,11 +13,10 @@
         <th>Third CA</th>
         <th>Exams</th>
         <th>Total</th>
-
     </thead>
     <tbody>
-        {% for student in students %}
-            {% for CA in subject.continousassessment_set.all %}
+        {% comment %} {% for student in students %} {% endcomment %}
+            {% for CA in continousassessment %}
                 <tr>
                     <td>{{ CA.student.get_full_name }}</td>
                     <td>{{ CA.subject.subject_name }}</td>
@@ -28,7 +27,7 @@
                 </tr>
             {% endfor %}
             {% comment %} <span>{{ student.continousassessment_set.all }}</span> {% endcomment %}
-        {% endfor %}
+        {% comment %} {% endfor %} {% endcomment %}
     </tbody>
 </table>
 {% endblock %}

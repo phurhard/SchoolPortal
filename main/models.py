@@ -101,7 +101,7 @@ class Student(CustomUser):
         return json.dumps(model_to_dict(self))
 
     def __str__(self):
-        return self.get_full_name() + str(self.current_class) + str(self.subjects)
+        return f'{self.get_full_name()} {str(self.current_class)}'
 
     class Meta:
         db_table = 'Student'
@@ -120,7 +120,14 @@ class Subject(models.Model):
         return f'{self.subject_name} ({self.subject_class}) - {self.teacher_name}'
 
 class Grade(models.Model):
-    category = models.CharField(max_length=200)
+    CLASS_SEGMENT = [
+        ('Pre_JSS', 'Pre_JSS'),
+        ('Nursery', 'Nursery'),
+        ('Primary', 'Primary'),
+        ('Junior Secondary', 'Junior Secondary'),
+        ('Senior Secondary', 'Senior Secondary'),
+        ]
+    category = models.CharField(max_length=200, choices=CLASS_SEGMENT, default=None, null=True)
     name = models.CharField(max_length=200)
 
     def to_json(self):
@@ -136,8 +143,8 @@ class Grade(models.Model):
         return self.name
 
 class ContinousAssessment(models.Model):
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    student = models.ForeignKey('Student', on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, default=None)
+    student = models.ForeignKey('Student', on_delete=models.CASCADE, default=None)
     first_ca = models.IntegerField(default=0)
     second_ca = models.IntegerField(default=0)
     third_ca = models.IntegerField(default=0)

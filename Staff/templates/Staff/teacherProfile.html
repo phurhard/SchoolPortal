@@ -18,7 +18,7 @@
             <td><a href="{% url 'subjectStudents' subject.id %}">{{ subject.subject_name }}</a></td>
             <td>{{subject.subject_class}}</td>
             <td>
-                {{student.subject.all|length}}
+                {{subject.student_set.all|length}}
             </td>
         </tr>
             {% endfor %}

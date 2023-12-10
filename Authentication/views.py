@@ -90,7 +90,8 @@ def signupTeacher(request):
             user = data.save(commit=False)
             user.reg_num = matric_no(request, user)
             user.save()
-            print(user.to_json())
+            messages.success(request, f'You can use this to login {user.reg_num}')
+            # print(user.to_json())
             return redirect('/login')
         else:
             return redirect('/auth/staff')
@@ -107,7 +108,7 @@ def signupStudent(request):
             user.reg_num = matric_no(request, user)
             user.save()
             # print(user.id)
-        
+            messages.success(request, f'You can use this to login {user.reg_num}')
             return redirect('/login')
         else:
             return redirect('/auth/student')
@@ -123,8 +124,8 @@ def login(request):
             password = form.cleaned_data.get('password')
             
             user = authenticate(request, reg_num=reg_num, password=password)
-            # print(user)
-            # print(form.cleaned_data)
+            print(user)
+            print(form.cleaned_data)
             if user is None:
                 
                 form.add_error(None, 'Invalid username or password')

@@ -13,17 +13,8 @@ def teacher_profile(request):
     if not request.user.is_authenticated:
         return redirect('/login/')
     user_id = request.user.id
-    print(user_id)
-    print(request.user)
-    # try:
     teacher = Teacher.objects.get(id=user_id)
     subjects = teacher.subject_set.all()
-    # except Teacher.DoesNotExist:
-        # return redirect('/login')
-    # for subject in subjects:
-    #     # for student in subject.students.all():
-    #     print(f'{subject.subject_name}')
-    #     no_of_student = len(subject.student_set.all())
     return render(request, 'Staff/teacherProfile.html', {'teacher': teacher, 'subjects': subjects})
 
 def teachers_list(request):
@@ -41,6 +32,12 @@ def subjectTeacher(request, id):
     print(subject)
     students = subject.student_set.all()
     print(students)
+    CA =[]
+    for student in students:
+        for ca in student.continousassessment_set.filter(subject=subject):
+            CA.append(ca)
+            # print(f'{ca.total}')
+    # print(f'This is the students Ca: {CA}')
     # continousassessment = student.continousassessment_set.filter()
-    return render(request, 'Staff/subjectTeacher.html', {'students': students, 'subject': subject})
+    return render(request, 'Staff/subjectTeacher.html', {'students': students, 'subject': subject, 'continousassessment': CA})
     # pass
