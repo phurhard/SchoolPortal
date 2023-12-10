@@ -132,10 +132,12 @@ def login(request):
             else:
                 auth_login(request, user)
                 # print(user)
-                print(request.user)
+                # print(request.user)
                 try:
                     # user = get_object_or_404(CustomUser, id=data)
-                    if user.student:
+                    if user.is_superuser:
+                        return redirect('/admin')
+                    elif user.student:
                         return redirect('/student')
                 except ObjectDoesNotExist:
                     return redirect('/staff')

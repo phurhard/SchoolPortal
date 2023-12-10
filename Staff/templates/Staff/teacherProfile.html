@@ -1,13 +1,28 @@
 {% extends "main/base.html" %}
 {% block content %}
 <h2>Teacher Profile</h2>
-<p>Name: {{ user.get_full_name }}</p>
-<p>Email: {{ user.email }}</p>
-<p>Reg Num: {{ user.reg_num }}</p>
+<p>Name: {{ teacher.get_full_name }}</p>
+<p>Email: {{ teacher.email }}</p>
+<p>Reg Num: {{ teacher.reg_num }}</p>
 <p>Subjects:</p>
-<ul>
-{% for subject in user.teacher.subject_set.all %}
-<li><a href="{% url 'subjectStudents' subject.id %}">{{ subject.subject_name }} {{subject.subject_class}}</a></li>
-{% endfor %}
-</ul>
+<table class="table">
+    <thead>
+        <th>Subject Name</th>
+        <th>Class</th>
+        <th>No of students</th>
+    </thead>
+    <tbody>
+        <tr>
+            {% for subject in subjects %}
+
+            <td><a href="{% url 'subjectStudents' subject.id %}">{{ subject.subject_name }}</a></td>
+            <td>{{subject.subject_class}}</td>
+            <td>
+                {{student.subject.all|length}}
+            </td>
+        </tr>
+            {% endfor %}
+        
+    </tbody>
+</table>
 {% endblock %}

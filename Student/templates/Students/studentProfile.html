@@ -15,8 +15,10 @@
     </thead>
     <tbody>
         {% for subject in user.student.subjects.all %}
-        <td>{{ subject.subject_name }}</td>
-        <td>{{ subject.teacher_name}}</td>
+        <tr>
+            <td>{{ subject.subject_name }}</td>
+            <td>{{ subject.teacher_name}}</td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>

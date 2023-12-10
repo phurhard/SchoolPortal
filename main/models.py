@@ -154,3 +154,6 @@ class ContinousAssessment(models.Model):
             'exams': self.exams,
             'total': self.total
         }
+
+    def __str__(self):
+        return f'ContinousAssessment of {self.subject} for {self.student.get_full_name()}'

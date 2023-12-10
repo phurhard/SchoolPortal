@@ -4,29 +4,31 @@
 {% comment %} <h1>{{ subject.name }}</h1> {% endcomment %}
 <h1>Teacher: {{ user }}</h1>
 <h2>Subject/Class: {{ subject.subject_name }} {{ subject.subject_class }}</h2>
-<table class='table col-2 tr'>
-    <tr>
-        <td>student name</td>
-        <td>subject name</td>
-        <td>first CA</td>
-        <td>second CA</td>
-        <td>third CA</td>
-        <td>Exams</td>
-        <td>Total</td>
+<table class='table'>
+    <thead>
+        <th>Student name</th>
+        <th>Subject name</th>
+        <th>First CA</th>
+        <th>Second CA</th>
+        <th>Third CA</th>
+        <th>Exams</th>
+        <th>Total</th>
 
-    </tr>
-    {% for student in students %}
-    <tr>
-        <td>{{ student.get_full_name }}</td>
-        {% for CA in student.continousassessment_set.all %}
-            <td>{{ CA.subject.subject_name }}</td>
-            <td>{{ CA.first_ca }}</td>
-            <td>{{ CA.second_ca }}</td>
-            <td>{{ CA.exams }}</td>
-            <td>{{ CA.total }}</td>
+    </thead>
+    <tbody>
+        {% for student in students %}
+            {% for CA in subject.continousassessment_set.all %}
+                <tr>
+                    <td>{{ CA.student.get_full_name }}</td>
+                    <td>{{ CA.subject.subject_name }}</td>
+                    <td>{{ CA.first_ca }}</td>
+                    <td>{{ CA.second_ca }}</td>
+                    <td>{{ CA.exams }}</td>
+                    <td>{{ CA.total }}</td>
+                </tr>
+            {% endfor %}
+            {% comment %} <span>{{ student.continousassessment_set.all }}</span> {% endcomment %}
         {% endfor %}
-        {% comment %} <span>{{ student.continousassessment_set.all }}</span> {% endcomment %}
-    </tr>
-    {% endfor %}
+    </tbody>
 </table>
 {% endblock %}
