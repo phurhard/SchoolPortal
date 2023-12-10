@@ -1,13 +1,23 @@
 {% extends "main/base.html" %}
 {% block content %}
-<h2>Student Profile</h2>
-<p>Name: {{ user.get_full_name }}</p>
-<p>Reg_Num: {{ user.reg_num }}</p>
-<p>Class: {{ user.student.current_class }}</p>
+<h2 class="form-text">Student Profile</h2>
+<div class="container">
+    <p>Name: {{ user.get_full_name }}</p>
+    <p>Reg_Num: {{ user.reg_num }}</p>
+    <p>Class: {{ user.student.current_class }}</p>
+    <p><a href="{% url 'student_result' user.student.id %}">Result</a></p>
+</div>
 <p>Subjects:</p>
-<ul>
-{% for subject in user.student.subjects.all %}
-<li>{{ subject }}</li>
-{% endfor %}
-</ul>
+<table class="table">
+    <thead>
+        <th>Subject Name</th>
+        <th>Teacher Name</th>
+    </thead>
+    <tbody>
+        {% for subject in user.student.subjects.all %}
+        <td>{{ subject.subject_name }}</td>
+        <td>{{ subject.teacher_name}}</td>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

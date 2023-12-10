@@ -1,0 +1,16 @@
+{% extends "main/base.html" %}
+{% block content %}
+    <div>
+        <p><b>Name: </b>{{ user.get_full_name }}</p>
+        <p><b>Reg_Num: </b>{{ user.reg_num }}</p>
+        <p><b>Class: </b>{{ user.student.current_class }}</p>
+        {% comment %} <p><b>: </b>{{ user.get_full_name }}</p> {% endcomment %}
+    </div>
+    {% for subject in subjects %}
+    <table>
+        <tr>
+            <td></td>
+        </tr>
+
+    </table>
+{% endblock %}
