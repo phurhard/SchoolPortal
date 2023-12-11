@@ -5,4 +5,5 @@ urlpatterns = [
     path('staff/', views.teacher_profile, name='home_staff'),
     path('teachers/', views.teachers_list, name='teacher_list'),
     path('subject/<int:id>/students/', views.subjectTeacher, name='subjectStudents'),
+    path('test/', views.test, name='test'),
 ]

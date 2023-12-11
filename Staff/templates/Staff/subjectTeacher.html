@@ -20,14 +20,46 @@
                 <tr>
                     <td>{{ CA.student.get_full_name }}</td>
                     <td>{{ CA.subject.subject_name }}</td>
-                    <td>{{ CA.first_ca }}</td>
-                    <td>{{ CA.second_ca }}</td>
-                    <td>{{ CA.exams }}</td>
-                    <td>{{ CA.total }}</td>
+                    <td contenteditable="true" oninput="handleInput(this)">{{ CA.first_ca }}</td>
+                    <td contenteditable="true" oninput="handleInput(this)">{{ CA.second_ca }}</td>
+                    <td contenteditable="true" oninput="handleInput(this)">{{ CA.exams }}</td>
+                    <td contenteditable="true" oninput="handleInput(this)">{{ CA.total }}</td>
                 </tr>
             {% endfor %}
             {% comment %} <span>{{ student.continousassessment_set.all }}</span> {% endcomment %}
         {% comment %} {% endfor %} {% endcomment %}
     </tbody>
 </table>
+<script>
+    function handleInput(cell) {
+        // Handle the input event here
+        console.log("Content changed:", cell.innerText);
+
+        // Send the updated content to the backend view
+        sendDataToBackend(cell.innerText);
+    }
+
+    function sendDataToBackend(updatedContent) {
+        // Create an XMLHttpRequest object
+        var xhr = new XMLHttpRequest();
+
+        // Configure it to send a POST request to your Django backend view
+        xhr.open('POST', '/test/', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        // Define the data to be sent
+        var data = 'updated_content=' + encodeURIComponent(updatedContent);
+
+        // Set up the callback function to handle the response from the server
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // Handle the response from the server if needed
+                console.log('Server response:', xhr.responseText);
+            }
+        };
+
+        // Send the data to the server
+        xhr.send(data);
+    }
+</script>
 {% endblock %}

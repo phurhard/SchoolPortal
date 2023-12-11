@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from main.models import Teacher, Subject, Student, CustomUser
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 def index(request):
@@ -41,3 +43,8 @@ def subjectTeacher(request, id):
     # continousassessment = student.continousassessment_set.filter()
     return render(request, 'Staff/subjectTeacher.html', {'students': students, 'subject': subject, 'continousassessment': CA})
     # pass
+
+@csrf_exempt
+def test(request):
+    print('The frontend made the call')
+    return HttpResponse('Success')
