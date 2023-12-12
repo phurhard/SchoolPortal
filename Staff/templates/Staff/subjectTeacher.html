@@ -4,6 +4,8 @@
 {% comment %} <h1>{{ subject.name }}</h1> {% endcomment %}
 <h1>Teacher: {{ subject.teacher_name }}</h1>
 <h2>Subject/Class: {{ subject.subject_name }} {{ subject.subject_class }}</h2>
+<form action='/test/' method='POST'>
+    <input type='button' onclick='edit()' id='edit-btn' class='btn btn-primary' value='Edit'/>
 <table class='table'>
     <thead>
         <th>Student name</th>
@@ -15,28 +17,50 @@
         <th>Total</th>
     </thead>
     <tbody>
-        {% comment %} {% for student in students %} {% endcomment %}
             {% for CA in continousassessment %}
                 <tr>
                     <td>{{ CA.student.get_full_name }}</td>
                     <td>{{ CA.subject.subject_name }}</td>
-                    <td contenteditable="true" oninput="handleInput(this)">{{ CA.first_ca }}</td>
-                    <td contenteditable="true" oninput="handleInput(this)">{{ CA.second_ca }}</td>
-                    <td contenteditable="true" oninput="handleInput(this)">{{ CA.exams }}</td>
-                    <td contenteditable="true" oninput="handleInput(this)">{{ CA.total }}</td>
+                    <td class='scores' contenteditable="false" onblur="handleInput(this)">{{ CA.first_ca }}</td>
+                    <td class='scores' contenteditable="false" onblur="handleInput(this)">{{ CA.second_ca }}</td>
+                    <td class='scores' contenteditable="false" onblur="handleInput(this)">{{ CA.third_ca }}</td>
+                    <td class='scores' contenteditable="false" onblur="handleInput(this)">{{ CA.exams }}</td>
+                    <td contenteditable="false" oninput="handleInput(this)">{{ CA.total }}</td>
                 </tr>
             {% endfor %}
-            {% comment %} <span>{{ student.continousassessment_set.all }}</span> {% endcomment %}
-        {% comment %} {% endfor %} {% endcomment %}
     </tbody>
 </table>
+<button type="submit" class="btn btn-primary">Save</button>
+</form>
 <script>
+    function edit(){
+        const cells = document.querySelectorAll(".scores");
+        cells.forEach(function(cell) {
+            cell.contentEditable=true});
+    }
+    const edit_btn = document.getElementById("edit-btn");
+    edit_btn.onclick = edit;
+
     function handleInput(cell) {
         // Handle the input event here
         console.log("Content changed:", cell.innerText);
 
         // Send the updated content to the backend view
-        sendDataToBackend(cell.innerText);
+        // check if the content is integer
+        // isValid = isNaN(parseInt(cell.innerText)) || parseInt(cell.innerText).toString() !== cell.innerText;
+        value = +cell.innerText;
+        isValid = !isNaN(value);
+        
+        if (isValid) {
+            sendDataToBackend(cell.innerText);
+            cell.style.backgroundColor = 'white';
+            cell.style.color = 'black';
+            // will later refactor this to enable toggling of the bg.
+        } else {
+            console.log(`Invalid value assigned to cell.innerText ${cell.innerText}`);
+            cell.style.backgroundColor = 'red';
+            cell.style.color = 'white';
+        }
     }
 
     function sendDataToBackend(updatedContent) {
