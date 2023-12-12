@@ -33,21 +33,15 @@
 <button type="submit" onclick='hello()' class="btn btn-primary">Save</button>
 </form>
 <script>
-    function edited_data(){
-        console.log("Hello!");
-        datas = []
-        rows = document.querySelectorAll('tr');
-
-        rows.forEach(row => {
-            id = row.dataset.id;
-            first_ca = pass;
-            datas.push(row)
-        })
-    }
     function edit(){
+
         const cells = document.querySelectorAll(".scores");
         cells.forEach(function(cell) {
             cell.contentEditable=true});
+        rows = document.getElementsByTagName("tr");
+        rows.forEach(function(row) {
+            console.log(`The row: ${row.dataset.id}`);
+        });
     }
     const edit_btn = document.getElementById("edit-btn");
     edit_btn.onclick = edit;
@@ -62,10 +56,17 @@
         isValid = !isNaN(value);
         
         if (isValid) {
-            sendDataToBackend(cell.innerText, cell);
-            cell.style.backgroundColor = 'white';
-            cell.style.color = 'black';
+            if (value < 0 || value > 10) {
+                cell.style.backgroundColor = 'red';
+                cell.style.color = 'white';
+                // cell.innerText = value + 'value must be less than or equal to 10';
+
+            } else {
+                sendDataToBackend(cell.innerText, cell);
+                cell.style.backgroundColor = 'white';
+                cell.style.color = 'black';
             // will later refactor this to enable toggling of the bg.
+            }
         } else {
             console.log(`Invalid value assigned to cell.innerText ${cell.innerText}`);
             cell.style.backgroundColor = 'red';
