@@ -18,7 +18,7 @@
     </thead>
     <tbody>
             {% for CA in continousassessment %}
-                <tr>
+                <tr data-id='{{ CA.id }}'>
                     <td>{{ CA.student.get_full_name }}</td>
                     <td>{{ CA.subject.subject_name }}</td>
                     <td class='scores' contenteditable="false" onblur="handleInput(this)">{{ CA.first_ca }}</td>
@@ -30,9 +30,20 @@
             {% endfor %}
     </tbody>
 </table>
-<button type="submit" class="btn btn-primary">Save</button>
+<button type="submit" onclick='hello()' class="btn btn-primary">Save</button>
 </form>
 <script>
+    function edited_data(){
+        console.log("Hello!");
+        datas = []
+        rows = document.querySelectorAll('tr');
+
+        rows.forEach(row => {
+            id = row.dataset.id;
+            first_ca = pass;
+            datas.push(row)
+        })
+    }
     function edit(){
         const cells = document.querySelectorAll(".scores");
         cells.forEach(function(cell) {
@@ -47,12 +58,11 @@
 
         // Send the updated content to the backend view
         // check if the content is integer
-        // isValid = isNaN(parseInt(cell.innerText)) || parseInt(cell.innerText).toString() !== cell.innerText;
         value = +cell.innerText;
         isValid = !isNaN(value);
         
         if (isValid) {
-            sendDataToBackend(cell.innerText);
+            sendDataToBackend(cell.innerText, cell);
             cell.style.backgroundColor = 'white';
             cell.style.color = 'black';
             // will later refactor this to enable toggling of the bg.
@@ -63,7 +73,7 @@
         }
     }
 
-    function sendDataToBackend(updatedContent) {
+    function sendDataToBackend(updatedContent, value) {
         // Create an XMLHttpRequest object
         var xhr = new XMLHttpRequest();
 
@@ -73,6 +83,7 @@
 
         // Define the data to be sent
         var data = 'updated_content=' + encodeURIComponent(updatedContent);
+        console.log(`cell : ${value}`);
 
         // Set up the callback function to handle the response from the server
         xhr.onreadystatechange = function () {

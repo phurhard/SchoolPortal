@@ -47,4 +47,5 @@ def subjectTeacher(request, id):
 @csrf_exempt
 def test(request):
     print('The frontend made the call')
+    print(request.POST)
     return HttpResponse('Success')
