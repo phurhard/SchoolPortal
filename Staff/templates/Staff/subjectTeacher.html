@@ -62,7 +62,7 @@
                 // cell.innerText = value + 'value must be less than or equal to 10';
 
             } else {
-                sendDataToBackend(cell.innerText, cell);
+                sendDataToBackend(cell.innerText);
                 cell.style.backgroundColor = 'white';
                 cell.style.color = 'black';
             // will later refactor this to enable toggling of the bg.
@@ -74,7 +74,7 @@
         }
     }
 
-    function sendDataToBackend(updatedContent, value) {
+    function sendDataToBackend(updatedContent) {
         // Create an XMLHttpRequest object
         var xhr = new XMLHttpRequest();
 
@@ -84,7 +84,6 @@
 
         // Define the data to be sent
         var data = 'updated_content=' + encodeURIComponent(updatedContent);
-        console.log(`cell : ${value}`);
 
         // Set up the callback function to handle the response from the server
         xhr.onreadystatechange = function () {
