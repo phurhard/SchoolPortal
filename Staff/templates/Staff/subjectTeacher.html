@@ -31,8 +31,9 @@
             {% endfor %}
     </tbody>
 </table>
-<button type="submit" onclick='saveData()' class="btn btn-primary">Save</button>
 </form>
+<button type="submit" onclick='sendDataToBackend(saveData())' class="btn btn-primary">Save</button>
+{% comment %} the button was initially in the form field, so the call to the /test/ was repeated twice, but now that i have rremoved the button from the form fieldit only makes the call once. {% endcomment %}
 <script>
     function edit(){
         const cells = document.querySelectorAll(".scores");
@@ -72,37 +73,41 @@
     }
 
     function saveData() {
-        const data_arr = [];
+        const data_arr = {};
         const table = document.getElementById('table');
         const rows = table.getElementsByTagName('tr');
         for (let i = 1; i < rows.length; i++) {
             const cells = rows[i].getElementsByTagName('td');
+            const ca_id = rows[i].dataset.id;
             const rowData = {
-                user_id: rows[i].dataset.id,
-                first_ca: cells[2].innerText,
+            ca_id: rows[i].dataset.id,
+            first_ca: cells[2].innerText,
                 second_ca: cells[3].innerText,
                 third_ca: cells[4].innerText,
                 exams: cells[5].innerText
             };
-            data_arr.push(rowData);
+            data_arr[ca_id] = rowData;
         }
-        console.log(data_arr);
-        sendDataToBackend(data_arr);
-        // return data_arr;
+        console.log('Data Arr: ', data_arr);
+        
+        // sendDataToBackend(data_arr);
+        return data_arr;
     }
 
-    function sendDataToBackend(updatedContent) {
+    function sendDataToBackend(saveData) {
+        console.log('sending data to backend: ', saveData);
+        
         fetch('/test/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({'data': updatedContent}),
+            body: JSON.stringify(saveData),
         }
         )
-        .then(res => res.json())
-        .then(data => console.log(data));
+        // .then(res => res.json())
+        .then(data => console.log(data))
         .catch(err => {console.error(err);});
-    }3
+    }
 </script>
 {% endblock %}

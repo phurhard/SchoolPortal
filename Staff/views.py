@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from main.models import Teacher, Subject, Student, CustomUser
+from main.models import ContinousAssessment, Teacher, Subject, Student, CustomUser
 from django.http import HttpResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -48,11 +48,26 @@ def subjectTeacher(request, id):
 
 @csrf_exempt
 def test(request):
-    print('The frontend made the call')
-    print(f'the request post is this: {request.POST}')
-    print(f'the request body is this: {request.body}')
+    # print('The frontend made the call')
+    # print(f'the request post is this: {request.POST}')
+    # print(f'the request body is this: {request.body}')
     if request.method == 'POST':
-        print('Request method is post')
-        # data = json.loads(request.body)
-        print(f'This is the data: {request.body}')
+        # print('Request method is post')
+        data = json.loads(request.body)
+        # print(f'This is the data: {data}')
+        # check which student is that
+        # user = data['user_id']
+        print(data.values())
+        for caID in data.keys():
+            CA = ContinousAssessment.objects.get(id=caID)
+            print(CA)
+            for values in data.values():
+                # print(f'this are the values{values}')
+                for k,v in values.items():
+                    # print(f'Key {k}: Value {v}')
+                    setattr(CA, k, v)
+                    CA.save()
+                    
+                # print(type(values))
+            print(CA.first_ca)
     return HttpResponse('Success')
