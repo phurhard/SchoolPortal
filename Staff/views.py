@@ -57,17 +57,16 @@ def test(request):
         # print(f'This is the data: {data}')
         # check which student is that
         # user = data['user_id']
-        print(data.values())
-        for caID in data.keys():
+        print(data.items())
+        for caID, caValues in data.items():
             CA = ContinousAssessment.objects.get(id=caID)
             print(CA)
-            for values in data.values():
-                # print(f'this are the values{values}')
-                for k,v in values.items():
-                    # print(f'Key {k}: Value {v}')
-                    setattr(CA, k, v)
-                    CA.save()
-                    
-                # print(type(values))
-            print(CA.first_ca)
+            for k, v in caValues.items():
+                # print(f'Key {k}: Value {v}')
+                print(f'This is the model of {CA}')
+                print(f'{k} = {v}')
+                setattr(CA, k, v)
+            CA.total = int(CA.first_ca) + int(CA.second_ca) + int(CA.third_ca) + int(CA.exams)
+            print(CA.total)
+            CA.save()
     return HttpResponse('Success')

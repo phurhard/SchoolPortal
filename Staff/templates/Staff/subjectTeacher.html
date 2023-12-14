@@ -4,7 +4,7 @@
 {% comment %} <h1>{{ subject.name }}</h1> {% endcomment %}
 <h1>Teacher: {{ subject.teacher_name }}</h1>
 <h2>Subject/Class: {{ subject.subject_name }} {{ subject.subject_class }}</h2>
-<form action='/test/' method='POST'>
+<form action='/subject/{{ subject.id }}/students/' method='GET'>
     {% comment %} {% csrf_token %} {% endcomment %}
     <input type='button' onclick='edit()' id='edit-btn' class='btn btn-primary' value='Edit the scores'/>
 <table class='table' id='table'>
@@ -80,8 +80,7 @@
             const cells = rows[i].getElementsByTagName('td');
             const ca_id = rows[i].dataset.id;
             const rowData = {
-            ca_id: rows[i].dataset.id,
-            first_ca: cells[2].innerText,
+                first_ca: cells[2].innerText,
                 second_ca: cells[3].innerText,
                 third_ca: cells[4].innerText,
                 exams: cells[5].innerText
@@ -106,8 +105,15 @@
         }
         )
         // .then(res => res.json())
-        .then(data => console.log(data))
+        .then(data => {
+            console.log(data);
+            setTimeout(function() {
+                location.reload();
+            }, 500);
+        })
         .catch(err => {console.error(err);});
+
+        // location.reload();
     }
 </script>
 {% endblock %}
