@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'Authentication.apps.AuthenticationConfig',
     'corsheaders',
+    'wkhtmltopdf',
     'Staff.apps.StaffConfig',
     'Student.apps.StudentConfig',
     'crispy_forms',
@@ -158,7 +159,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATIC_ROOT = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
