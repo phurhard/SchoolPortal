@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from main.models import Teacher, Subject, Student, CustomUser
 from django.http import HttpResponse
+import json
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
@@ -31,12 +32,13 @@ def teachers_list(request):
 def subjectTeacher(request, id):
     """Returns the students taking a particular subject"""
     subject = Subject.objects.get(id=id)
-    print(subject)
+    # print(subject)
     students = subject.student_set.all()
-    print(students)
+    # print(students)
     CA =[]
     for student in students:
         for ca in student.continousassessment_set.filter(subject=subject):
+            print(f'This is the CA id: {ca.id}')
             CA.append(ca)
             # print(f'{ca.total}')
     # print(f'This is the students Ca: {CA}')
@@ -47,5 +49,10 @@ def subjectTeacher(request, id):
 @csrf_exempt
 def test(request):
     print('The frontend made the call')
-    print(request.POST)
+    print(f'the request post is this: {request.POST}')
+    print(f'the request body is this: {request.body}')
+    if request.method == 'POST':
+        print('Request method is post')
+        # data = json.loads(request.body)
+        print(f'This is the data: {request.body}')
     return HttpResponse('Success')

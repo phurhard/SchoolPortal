@@ -5,8 +5,9 @@
 <h1>Teacher: {{ subject.teacher_name }}</h1>
 <h2>Subject/Class: {{ subject.subject_name }} {{ subject.subject_class }}</h2>
 <form action='/test/' method='POST'>
-    <input type='button' onclick='edit()' id='edit-btn' class='btn btn-primary' value='Edit'/>
-<table class='table'>
+    {% comment %} {% csrf_token %} {% endcomment %}
+    <input type='button' onclick='edit()' id='edit-btn' class='btn btn-primary' value='Edit the scores'/>
+<table class='table' id='table'>
     <thead>
         <th>Student name</th>
         <th>Subject name</th>
@@ -30,18 +31,13 @@
             {% endfor %}
     </tbody>
 </table>
-<button type="submit" onclick='hello()' class="btn btn-primary">Save</button>
+<button type="submit" onclick='saveData()' class="btn btn-primary">Save</button>
 </form>
 <script>
     function edit(){
-
         const cells = document.querySelectorAll(".scores");
         cells.forEach(function(cell) {
             cell.contentEditable=true});
-        rows = document.getElementsByTagName("tr");
-        rows.forEach(function(row) {
-            console.log(`The row: ${row.dataset.id}`);
-        });
     }
     const edit_btn = document.getElementById("edit-btn");
     edit_btn.onclick = edit;
@@ -62,7 +58,8 @@
                 // cell.innerText = value + 'value must be less than or equal to 10';
 
             } else {
-                sendDataToBackend(cell.innerText);
+                // sendDataToBackend(cell.innerText);
+                // saveData(cell.innerText);
                 cell.style.backgroundColor = 'white';
                 cell.style.color = 'black';
             // will later refactor this to enable toggling of the bg.
@@ -74,27 +71,38 @@
         }
     }
 
-    function sendDataToBackend(updatedContent) {
-        // Create an XMLHttpRequest object
-        var xhr = new XMLHttpRequest();
-
-        // Configure it to send a POST request to your Django backend view
-        xhr.open('POST', '/test/', true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-        // Define the data to be sent
-        var data = 'updated_content=' + encodeURIComponent(updatedContent);
-
-        // Set up the callback function to handle the response from the server
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                // Handle the response from the server if needed
-                console.log('Server response:', xhr.responseText);
-            }
-        };
-
-        // Send the data to the server
-        xhr.send(data);
+    function saveData() {
+        const data_arr = [];
+        const table = document.getElementById('table');
+        const rows = table.getElementsByTagName('tr');
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            const rowData = {
+                user_id: rows[i].dataset.id,
+                first_ca: cells[2].innerText,
+                second_ca: cells[3].innerText,
+                third_ca: cells[4].innerText,
+                exams: cells[5].innerText
+            };
+            data_arr.push(rowData);
+        }
+        console.log(data_arr);
+        sendDataToBackend(data_arr);
+        // return data_arr;
     }
+
+    function sendDataToBackend(updatedContent) {
+        fetch('/test/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({'data': updatedContent}),
+        }
+        )
+        .then(res => res.json())
+        .then(data => console.log(data));
+        .catch(err => {console.error(err);});
+    }3
 </script>
 {% endblock %}
