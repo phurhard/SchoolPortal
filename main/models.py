@@ -94,8 +94,8 @@ class Teacher(CustomUser):
         db_table = 'Teacher'
 
 class Student(CustomUser):
-    current_class: object = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True)
-    subjects: object = models.ManyToManyField('Subject')
+    current_class = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True)
+    subjects = models.ManyToManyField('Subject')
 
     def to_json(self):
         return json.dumps(model_to_dict(self))
@@ -105,6 +105,15 @@ class Student(CustomUser):
 
     class Meta:
         db_table = 'Student'
+
+# Signal function to handle subject assignment to students
+@receiver(post_save, sender=Student)
+def assign_subjects_to_student(sender, instance, created, **kwargs):
+    if created:
+        # If the student is newly created, assign subjects for their class
+        student_class = instance.current_class
+        subjects_for_class = Subject.objects.filter(subject_class=student_class)
+        instance.subjects.add(*subjects_for_class)
 
 class Subject(models.Model):
     subject_name = models.CharField(max_length=100)
