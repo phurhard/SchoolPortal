@@ -109,6 +109,7 @@ def signupStudent(request):
             user.save()
             # print(user.id)
             messages.success(request, f'You can use this to login {user.reg_num}')
+            print(messages)
             return redirect('/login')
         else:
             return redirect('/auth/student')

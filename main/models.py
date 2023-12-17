@@ -173,3 +173,10 @@ class ContinousAssessment(models.Model):
 
     def __str__(self):
         return f'ContinousAssessment of {self.subject} for {self.student.get_full_name()}'
+
+@receiver(post_save, sender=Subject)
+def assign_continous_assessment(sender, instance, created, **kwargs):
+    """Automatically assings continous assessment to a specific subject to a student."""
+    if created:
+        CA = ContinousAssessment.objects.create()
+        CA.subject = instance
