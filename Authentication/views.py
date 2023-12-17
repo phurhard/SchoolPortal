@@ -101,15 +101,16 @@ def signupTeacher(request):
     
     
 def signupStudent(request):
+    """Registers a student to the school database
+        The school will be the one to inform students of their login credentials
+    """
     if request.method == 'POST':
         data = StudentSignUpForm(request.POST)
         if data.is_valid():
             user = data.save(commit=False)
             user.reg_num = matric_no(request, user)
             user.save()
-            # print(user.id)
-            messages.success(request, f'You can use this to login {user.reg_num}')
-            print(messages)
+
             return redirect('/login')
         else:
             return redirect('/auth/student')

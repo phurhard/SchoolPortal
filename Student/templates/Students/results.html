@@ -19,14 +19,16 @@
         <tbody>
             {% for subject in student.subjects.all %}
                 {% for ca in subject.continousassessment_set.all %}
-                    <tr>
-                        <td>{{ ca.subject.subject_name}}</td>
-                        <td>{{ ca.first_ca }}</td>
-                        <td>{{ ca.second_ca }}</td>
-                        <td>{{ ca.third_ca }}</td>
-                        <td>{{ ca.exams }}</td>
-                        <td>{{ ca.total }}</td>
-                    </tr>
+                    {% if ca.student == student %}
+                        <tr>
+                            <td>{{ ca.subject.subject_name}}</td>
+                            <td>{{ ca.first_ca }}</td>
+                            <td>{{ ca.second_ca }}</td>
+                            <td>{{ ca.third_ca }}</td>
+                            <td>{{ ca.exams }}</td>
+                            <td>{{ ca.total }}</td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
             {% endfor %}    
         </tbody>
