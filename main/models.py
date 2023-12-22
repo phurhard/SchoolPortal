@@ -138,6 +138,7 @@ class Grade(models.Model):
         ]
     category = models.CharField(max_length=200, choices=CLASS_SEGMENT, default=None, null=True)
     name = models.CharField(max_length=200)
+    # change the name to int, and make it unique, so only one class can be created
 
     def to_json(self):
         return {
