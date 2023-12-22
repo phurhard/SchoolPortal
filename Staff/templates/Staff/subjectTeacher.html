@@ -1,11 +1,10 @@
 {% extends "main/base.html" %}
 {% block title %}Al-Iman | My Students{% endblock %}
 {% block content %}
-{% comment %} <h1>{{ subject.name }}</h1> {% endcomment %}
 <h1>Teacher: {{ subject.teacher_name }}</h1>
 <h2>Subject/Class: {{ subject.subject_name }} {{ subject.subject_class }}</h2>
 <form action='/subject/{{ subject.id }}/students/' method='GET'>
-    {% comment %} {% csrf_token %} {% endcomment %}
+    {% csrf_token %}
     <input type='button' onclick='edit()' id='edit-btn' class='btn btn-primary' value='Edit the scores'/>
 <table class='table' id='table'>
     <thead>
@@ -22,46 +21,46 @@
                 <tr data-id='{{ CA.id }}'>
                     <td>{{ CA.student.get_full_name }}</td>
                     <td>{{ CA.subject.subject_name }}</td>
-                    <td class='scores' contenteditable="false" onblur="handleInput(this)">{{ CA.first_ca }}</td>
-                    <td class='scores' contenteditable="false" onblur="handleInput(this)">{{ CA.second_ca }}</td>
-                    <td class='scores' contenteditable="false" onblur="handleInput(this)">{{ CA.third_ca }}</td>
-                    <td class='scores' contenteditable="false" onblur="handleInput(this)">{{ CA.exams }}</td>
-                    <td contenteditable="false" oninput="handleInput(this)">{{ CA.total }}</td>
+                    <td class='scores' contenteditable="false" onblur="handleTestInput(this)">{{ CA.first_ca }}</td>
+                    <td class='scores' contenteditable="false" onblur="handleTestInput(this)">{{ CA.second_ca }}</td>
+                    <td class='scores' contenteditable="false" onblur="handleTestInput(this)">{{ CA.third_ca }}</td>
+                    <td class='scores' contenteditable="false" onblur="handleExamInput(this)">{{ CA.exams }}</td>
+                    <td contenteditable="false">{{ CA.total }}</td>
                 </tr>
             {% endfor %}
     </tbody>
 </table>
 </form>
 <button type="submit" onclick='sendDataToBackend(saveData())' class="btn btn-primary">Save</button>
-{% comment %} the button was initially in the form field, so the call to the /test/ was repeated twice, but now that i have rremoved the button from the form fieldit only makes the call once. {% endcomment %}
 <script>
+    // This script handles the input from the teacher
+    // for all other cells if it is not the exam cell it'll check if the value is 0<x<10
+    // if it's exam its 0<x<70
+
     function edit(){
         const cells = document.querySelectorAll(".scores");
         cells.forEach(function(cell) {
             cell.contentEditable=true});
         this.style.backgroundColor = 'green';
     }
+
     const edit_btn = document.getElementById("edit-btn");
     edit_btn.onclick = edit;
 
-    function handleInput(cell) {
+    function handleTestInput(cell) {
         // Handle the input event here
         console.log("Content changed:", cell.innerText);
 
-        // Send the updated content to the backend view
-        // check if the content is integer
         value = +cell.innerText;
         isValid = !isNaN(value);
         
         if (isValid) {
+            
             if (value < 0 || value > 10) {
                 cell.style.backgroundColor = 'red';
                 cell.style.color = 'white';
-                // cell.innerText = value + 'value must be less than or equal to 10';
 
             } else {
-                // sendDataToBackend(cell.innerText);
-                // saveData(cell.innerText);
                 cell.style.backgroundColor = 'white';
                 cell.style.color = 'black';
             // will later refactor this to enable toggling of the bg.
@@ -73,6 +72,32 @@
         }
     }
 
+    function handleExamInput(cell) {
+        // Handle the input event here
+        console.log("Content changed:", cell.innerText);
+
+        value = +cell.innerText;
+        isValid = !isNaN(value);
+        
+        if (isValid) {
+            
+            if (value < 0 || value > 70) {
+                cell.style.backgroundColor = 'red';
+                cell.style.color = 'white';
+
+            } else {
+                cell.style.backgroundColor = 'white';
+                cell.style.color = 'black';
+            // will later refactor this to enable toggling of the bg.
+            }
+        } else {
+            console.log(`Invalid value assigned to cell.innerText ${cell.innerText}`);
+            cell.style.backgroundColor = 'red';
+            cell.style.color = 'white';
+        }
+    }
+
+
     function saveData() {
         const data_arr = {};
         const table = document.getElementById('table');
@@ -80,6 +105,13 @@
         for (let i = 1; i < rows.length; i++) {
             const cells = rows[i].getElementsByTagName('td');
             const ca_id = rows[i].dataset.id;
+            for (let i = 2; i < cells.length; i++) {
+                if (cells[i].style.backgroundColor == 'red') {
+                    alert('The inputs are not correctly formatted');
+                    // find a way to make this break the process of submitting the scores
+                    break;
+                };
+            };
             const rowData = {
                 first_ca: cells[2].innerText,
                 second_ca: cells[3].innerText,
@@ -87,7 +119,8 @@
                 exams: cells[5].innerText
             };
             data_arr[ca_id] = rowData;
-        }
+        };
+
         console.log('Data Arr: ', data_arr);
         
         // sendDataToBackend(data_arr);
@@ -97,7 +130,7 @@
     function sendDataToBackend(saveData) {
         console.log('sending data to backend: ', saveData);
         
-        fetch('/test/', {
+        fetch('/record/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -105,7 +138,6 @@
             body: JSON.stringify(saveData),
         }
         )
-        // .then(res => res.json())
         .then(data => {
             console.log(data);
             setTimeout(function() {
