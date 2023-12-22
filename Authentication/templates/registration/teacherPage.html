@@ -3,20 +3,12 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% if messages %}
-  <ul class="messages">
-    {% for message in messages %}
-      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %}
-
-<!-- Your signup form goes here -->
-
 <form method="post">
-    {% csrf_token %}{{form|crispy}}
+    {% csrf_token %}
     {{ data }}
     <p>Have an account? Login <a href="/login">Here</a>!</p>
     <button type="submit" class="btn btn-success">Register</button>
+    <!-- This button automatically calls the post of form element, need to find how to make use of a callback function
+    so when the data has been sent to the backend it should display alert. or use the button out of the form -->
 </form>
 {% endblock %}
