@@ -5,9 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 
 class SignupForm(BaseUserCreationForm):
-    # other_name = forms.CharField(max_length=255)
-    # phone_number = forms.CharField(max_length=15)
-
     class Meta:
         model = CustomUser
         fields = ["first_name", "last_name", "other_name", "phone_number"]
@@ -22,9 +19,6 @@ class TeacherSignUpForm(SignupForm):
         
 
 class StudentSignUpForm(SignupForm):
-    # current_class = forms.ModelChoiceField(queryset=Grade.objects.all())
-    # subjects = forms.ModelMultipleChoiceField(queryset=Subject.objects.all())
-    
     class Meta(SignupForm.Meta):
         model = Student
         fields = SignupForm.Meta.fields
