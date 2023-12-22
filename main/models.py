@@ -162,10 +162,11 @@ class Grade(models.Model):
             'category': self.category,
             'name': self.name
         }
-
+    for cat, choi in self.MEDIA_CHOICES:
+            print(f'category {cat}, Choices {choi}')
     def __str__(self):
-        main_category = next((category for category, choices in MEDIA_CHOICES if self.category in dict(choices).values()), None)
-        return f'{self.category}: {self.get_category_display()}'
+        main_category = next((choices for category, choices in self.MEDIA_CHOICES), None)
+        return f'{main_category}: {self.get_category_display()}'
 
     def __unicode__(self):
         return self.name
