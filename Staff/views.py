@@ -5,6 +5,8 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from django.template import engines
+from Staff.decorators import teacher_only
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -13,7 +15,8 @@ def index(request):
     print(request.user)
     return render(request, 'Staff/index.html')
 
-
+@login_required
+@teacher_only
 def teacher_profile(request):
     '''Returns the profile of the teacher with the subjects taugth'''
     if not request.user.is_authenticated:
@@ -27,6 +30,8 @@ def teacher_profile(request):
             raise Http404('You are not authenticated for this page')
     return render(request, 'Staff/teacherProfile.html', {'teacher': teacher, 'subjects': subjects})
 
+@login_required
+@teacher_only
 def teachers_list(request):
     if request.user.is_superuser and request.user.is_authenticated:
         """Only accesible to an admin"""
@@ -35,25 +40,26 @@ def teachers_list(request):
     else:
         """Return to profile page"""
         return redirect('/staff')
-    
+
+@login_required
+@teacher_only
 def subjectTeacher(request, id):
-    """Returns the students taking a particular subject"""
+    """Returns the students taking a particular subject and their respective scores in the CA"""
     subject = Subject.objects.get(id=id)
-    # print(subject)
     students = subject.student_set.all()
-    # print(students)
     CA =[]
     for student in students:
         for ca in student.continousassessment_set.filter(subject=subject):
-            print(f'This is the CA id: {ca.id}')
+            # print(f'This is the CA id: {ca.id}')
             CA.append(ca)
             # print(f'{ca.total}')
     # print(f'This is the students Ca: {CA}')
     # continousassessment = student.continousassessment_set.filter()
     return render(request, 'Staff/subjectTeacher.html', {'students': students, 'subject': subject, 'continousassessment': CA})
-    # pass
 
-@csrf_exempt
+
+@login_required
+@teacher_only
 def ScoresRecord(request):
     """This function is the view for editing the CA and exams of students by teachers
     it saves it to the database"""
@@ -73,43 +79,3 @@ def ScoresRecord(request):
             # print(CA.total)
             CA.save()
     return HttpResponse('Success')
-
-def classes(request):
-    '''returns a pdf of teacher subjects'''
-    # Render the Jinja template
-    template = engines['django'].from_string(open('Staff/templates/Staff/classess.html').read())
-    html_content = template.render({'user': request.user})
-
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="report.pdf"'
-
-    # Use ReportLab to convert HTML to PDF
-    from reportlab.pdfgen import canvas
-    from reportlab.lib.pagesizes import letter
-    # from django.http import HttpResponse
-
-    pdf_file = response
-
-    p = canvas.Canvas(pdf_file, pagesize=letter)
-    width, height = letter
-
-    # from reportlab.lib.pagesizes import letter
-    from reportlab.lib import colors
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
-    from reportlab.lib.styles import getSampleStyleSheet
-
-    # pdf_file = response
-    doc = SimpleDocTemplate(pdf_file)
-    story = []
-
-    styles = getSampleStyleSheet()
-
-    # Add the HTML content to the PDF
-    paragraphs = []
-    paragraphs.extend(Paragraph(line, styles["BodyText"]) for line in html_content.splitlines())
-
-    story.extend(paragraphs)
-
-    doc.build(story)
-
-    return response

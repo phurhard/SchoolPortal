@@ -80,24 +80,23 @@ def index(request):
 def signupTeacher(request):
     """The signup logic for a teacher
     will first display the form and then process inputs
+    The admin will provide the credentials for login
     """
     if request.method == 'POST':
-        print(f'This is request.POST\n {request.POST}')
-        
-    # if request.method == 'POST':
-    #     data = TeacherSignUpForm(request.POST)
-    #     if data.is_valid():
-    #         user = data.save(commit=False)
-    #         user.reg_num = matric_no(request, user)
-    #         user.is_staff = True
-    #         user.save()
-    #         messages.success(request, f'You can use this to login {user.reg_num}')
-    #         return redirect('/login')
-    #     else:
-    #         return redirect('/auth/staff')
-    # else:
-    #     data = TeacherSignUpForm()
-    return render(request, 'registration/teacherPage.html')
+        data = TeacherSignUpForm(request.POST)
+        if data.is_valid():
+            user = data.save(commit=False)
+            user.reg_num = matric_no(request, user)
+            # user.is_staff = True
+            user.save()
+            # messages.success(request, f'You can use this to login {user.reg_num}')
+            return render(request, 'Authentication/index.html', {'user': user})
+            # return redirect('/login')
+        else:
+            return redirect('/auth/staff')
+    else:
+        data = TeacherSignUpForm()
+    return render(request, 'registration/teacherPage.html', {'data': data})
     
     
 def signupStudent(request):
@@ -113,7 +112,8 @@ def signupStudent(request):
             user.reg_num = matric_no(request, user)
             user.save()
 
-            return redirect('/login')
+            return render(request, 'Authentication/index.html', {'user': user})
+            # return redirect('/login')
         else:
             return redirect('/auth/student')
     else:
