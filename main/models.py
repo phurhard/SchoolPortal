@@ -117,8 +117,8 @@ def assign_subjects_to_student(sender, instance, created, **kwargs):
 
 class Subject(models.Model):
     subject_name = models.CharField(max_length=100)
-    subject_class = models.ForeignKey("Grade", related_name='subjects', on_delete=models.CASCADE)
-    teacher_name = models.ForeignKey("Teacher", on_delete=models.SET_NULL, null=True)
+    subject_class = models.ForeignKey("Grade", related_name='subjects', on_delete=models.CASCADE, default=None)
+    teacher_name = models.ForeignKey("Teacher", on_delete=models.SET_NULL, null=True, default=None)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 
@@ -136,8 +136,25 @@ class Grade(models.Model):
         ('Junior Secondary', 'Junior Secondary'),
         ('Senior Secondary', 'Senior Secondary'),
         ]
-    category = models.CharField(max_length=200, choices=CLASS_SEGMENT, default=None, null=True)
-    name = models.CharField(max_length=200)
+    MEDIA_CHOICES = [
+        (
+            "Audio",
+            (
+                ("vinyl", "Vinyl"),
+                ("cd", "CD"),
+            ),
+        ),
+        (
+            "Video",
+            (
+                ("vhs", "VHS Tape"),
+                ("dvd", "DVD"),
+            ),
+        ),
+        ("unknown", "Unknown"),
+        ]
+    category = models.CharField(max_length=200, choices=MEDIA_CHOICES, default="vinyl", null=True)
+    name = models.IntegerField()
     # change the name to int, and make it unique, so only one class can be created
 
     def to_json(self):
@@ -147,10 +164,12 @@ class Grade(models.Model):
         }
 
     def __str__(self):
-        return f'{self.category}: {self.name}'
+        main_category = next((category for category, choices in MEDIA_CHOICES if self.category in dict(choices).values()), None)
+        return f'{self.category}: {self.get_category_display()}'
 
     def __unicode__(self):
         return self.name
+
 
 class ContinousAssessment(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, default=None)

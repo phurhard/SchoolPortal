@@ -2,8 +2,12 @@
 {% block title %}Auth|Landing page{% endblock %}
 
 {% block content %}
-<p>This is the landing page for authentication.</p>
+<p>Welcome {{ user.get_full_name }} you have successfully signed up</p>
+<p>This is your login details, do ensure you copy it down somewhere safe.</p>
+<p>Reg Num: {{ user.reg_num }}</p>
+<p>Password: {{ user.password }}</p>
+{% comment %} find a way to decode the Password before it is sent to the frontend {% endcomment %}
 
-<button><a href='/auth/staff'>Teacher</a></button>
-<button><a href='/auth/student'>Student</a></button>
+<p>Please click <a href="/login/">here</a> to login.</p>
+
 {% endblock %}
