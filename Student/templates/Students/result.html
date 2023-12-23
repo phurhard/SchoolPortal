@@ -11,7 +11,6 @@
         <p><b>Name: </b>{{ student.get_full_name }}</p>
         <p><b>Reg_Num: </b>{{ student.reg_num }}</p>
         <p><b>Class: </b>{{ student.current_class }}</p>
-        {% comment %} <p><b>: </b>{{ user.get_full_name }}</p> {% endcomment %}
     </div>
     <table class="table">
         <thead>
@@ -39,7 +38,7 @@
             {% endfor %}    
         </tbody>
     </table>
-    <div>Print</div>
+    {% comment %} <div>Print</div> {% endcomment %}
     {% endif %}
 </body>
 </html>
