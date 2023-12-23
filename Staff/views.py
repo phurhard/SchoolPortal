@@ -31,7 +31,7 @@ def teacher_profile(request):
     return render(request, 'Staff/teacherProfile.html', {'teacher': teacher, 'subjects': subjects})
 
 @login_required
-@teacher_only
+# @teacher_only
 def teachers_list(request):
     if request.user.is_superuser and request.user.is_authenticated:
         """Only accesible to an admin"""

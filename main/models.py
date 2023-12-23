@@ -28,12 +28,6 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(reg_num, **extra_params)
 
 class CustomUser(AbstractUser):
-    # ROLE_CHOICES = [
-    #     ('Teacher', 'Teacher'),
-    #     ('Student', 'Student'),
-    # ]
-    # first_name = models.CharField(max_length=255)
-    # last_name = models.CharField(max_length=255)
     other_name = models.CharField(max_length=255, default='', null=True)
     reg_num = models.CharField(max_length=255, unique=True)
     username = None
@@ -86,19 +80,10 @@ class Student(CustomUser):
         return json.dumps(model_to_dict(self))
 
     def __str__(self):
-        return f'{self.get_full_name()} {str(self.current_class)}'
+        return f'{self.get_full_name()} in {str(self.current_class)}'
 
     class Meta:
         db_table = 'Student'
-
-# Signal function to handle subject assignment to students
-@receiver(post_save, sender=Student)
-def assign_subjects_to_student(sender, instance, created, **kwargs):
-    if created:
-        # If the student is newly created, assign subjects for their class
-        student_class = instance.current_class
-        subjects_for_class = Subject.objects.filter(subject_class=student_class)
-        instance.subjects.add(*subjects_for_class)
 
 class Subject(models.Model):
     subject_name = models.CharField(max_length=100)
@@ -188,7 +173,15 @@ def check_subjects(sender, instance, **kwargs):
     """Checks if the subject selected are the subjects allocated to that class"""
     for subject in instance.subjects.all():
         if subject.subject_class != instance.current_class:
-            break
+            break # find a way to stop all the process altogether so other functions are not called
+
+# Signal function to handle subject assignment to students
+@receiver(pre_save, sender=Student)
+def assign_subjects_to_student(sender, instance, created, **kwargs):
+    # If the student is newly created, assign subjects for their class
+    student_class = instance.current_class
+    subjects_for_class = Subject.objects.filter(subject_class=student_class)
+    instance.subjects.add(*subjects_for_class)
 
 @receiver(post_save, sender=Student)
 def assign_continous_assessment(sender, instance, created, **kwargs):
