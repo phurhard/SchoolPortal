@@ -1,7 +1,9 @@
 from django.shortcuts import get_list_or_404, get_object_or_404, render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from main.models import Student
-from django.template import engines
+from django.template.loader import get_template
+from django_xhtml2pdf.utils import render_to_pdf_response, generate_pdf
+from xhtml2pdf import pisa
 
 # Create your views here.
 
@@ -26,39 +28,9 @@ def results(request, id) -> HttpResponse:
 def resultToPDF(request):
     '''returns a pdf of teacher subjects'''
     # Render the Jinja template
-    template = engines['django'].from_string(open('Student/templates/Students/result.html').read())
-    html_content = template.render({'student': request.user})
-
+    template_name = 'Students/result.html'
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="report.pdf"'
-
-    # Use ReportLab to convert HTML to PDF
-    from reportlab.pdfgen import canvas
-    from reportlab.lib.pagesizes import letter
-    # from django.http import HttpResponse
-
-    pdf_file = response
-
-    p = canvas.Canvas(pdf_file, pagesize=letter)
-    width, height = letter
-
-    # from reportlab.lib.pagesizes import letter
-    from reportlab.lib import colors
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
-    from reportlab.lib.styles import getSampleStyleSheet
-
-    # pdf_file = response
-    doc = SimpleDocTemplate(pdf_file)
-    story = []
-
-    styles = getSampleStyleSheet()
-
-    # Add the HTML content to the PDF
-    paragraphs = []
-    paragraphs.extend(Paragraph(line, styles["BodyText"]) for line in html_content.splitlines())
-
-    story.extend(paragraphs)
-
-    doc.build(story)
-
+    context = {'student': request.user.student}
+    response = render_to_pdf_response(template_name, context)
+    response['Content-Disposition'] = f'attachment; filename="{request.user.get_full_name()}_Report.pdf"'
     return response

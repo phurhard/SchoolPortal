@@ -1,40 +1,39 @@
 {% extends "main/base.html" %}
 {% block content %}
-{% if student %}
-    <div>
-        <p><b>Name: </b>{{ student.get_full_name }}</p>
-        <p><b>Reg_Num: </b>{{ student.reg_num }}</p>
-        <p><b>Class: </b>{{ student.current_class }}</p>
-        {% comment %} <p><b>: </b>{{ user.get_full_name }}</p> {% endcomment %}
-    </div>
-    <table class="table">
-        <thead>
-            <th>Subject Name</th>
-            <th>First CA</th>
-            <th>Second CA</th>
-            <th>Third CA</th>
-            <th>Exams</th>
-            <th>Total</th>
-        </thead>
-        <tbody>
-            {% for subject in student.subjects.all %}
-                {% for ca in subject.continousassessment_set.all %}
-                    {% if ca.student == student %}
-                        <tr>
-                            <td>{{ ca.subject.subject_name}}</td>
-                            <td>{{ ca.first_ca }}</td>
-                            <td>{{ ca.second_ca }}</td>
-                            <td>{{ ca.third_ca }}</td>
-                            <td>{{ ca.exams }}</td>
-                            <td>{{ ca.total }}</td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            {% endfor %}    
-        </tbody>
-    </table>
-    <div><a href="{% url 'pdf' %}" class="btn btn-primary">Print</a></div>
-{% else %}
-<p>Please <a href="{% url 'login' %}">login</a> and try again</p>
-{% endif %}
+    {% if student.subjects.all %}
+        <div>
+            <p><b>Name: </b>{{ student.get_full_name }}</p>
+            <p><b>Reg_Num: </b>{{ student.reg_num }}</p>
+            <p><b>Class: </b>{{ student.current_class }}</p>
+        </div>
+        <table class="table">
+            <thead>
+                <th>Subject Name</th>
+                <th>First CA</th>
+                <th>Second CA</th>
+                <th>Third CA</th>
+                <th>Exams</th>
+                <th>Total</th>
+            </thead>
+            <tbody>
+                {% for subject in student.subjects.all %}
+                    {% for ca in subject.continousassessment_set.all %}
+                        {% if ca.student == student %}
+                            <tr>
+                                <td>{{ ca.subject.subject_name}}</td>
+                                <td>{{ ca.first_ca }}</td>
+                                <td>{{ ca.second_ca }}</td>
+                                <td>{{ ca.third_ca }}</td>
+                                <td>{{ ca.exams }}</td>
+                                <td>{{ ca.total }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}    
+            </tbody>
+        </table>
+        <div><a href="{% url 'pdf' %}" class="btn btn-primary">Print</a></div>
+    {% else %}
+        <p>No subjects available for this student</p>
+    {% endif %}
 {% endblock %}
