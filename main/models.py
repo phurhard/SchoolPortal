@@ -2,7 +2,8 @@ from django.db import models
 from django.forms.models import model_to_dict
 import json
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
+from django.http import Http404
 from django.dispatch import receiver
 # Create your models here.
 """subjects should be referenced to classes, on student view send the subjects
@@ -66,30 +67,14 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'reg_num'
     REQUIRED_FIELDS = []
 
-# @receiver(post_save, sender=CustomUser)
-# def create_user_profile(sender, instance, created, **kwargs):
-#     if created:
-#         if instance.role == 'Teacher':
-#             Teacher.objects.create(email=instance.email, admin=instance)
-#         elif instance.role == 'Student':
-#             Student.objects.create(current_class=None, admin=instance)
-
-# @receiver(post_save, sender=CustomUser)
-# def save_user_profile(sender, instance, **kwargs):
-#     if instance.role == 'Teacher':
-#         instance.teacher.save()
-#     elif instance.role == 'Student':
-#         instance.student.save()
 
 class Teacher(CustomUser):
-    # email = models.EmailField(max_length=254)
     level = models.IntegerField(verbose_name='worker_level', default=1)
     salary = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
 
     def __str__(self):
         return self.get_full_name()
     
-    # EMAIL_FIELD = 'email'
     class Meta:
         db_table = 'Teacher'
 
@@ -125,8 +110,38 @@ class Subject(models.Model):
     class Meta:
         ordering = ['subject_name']
 
+    def save(self, *args, **kwargs):
+        """Overriding the main functionality so that before it is saved,
+        it'll add a CA to itself and also check if it does not exists before to prevent repetition"""
+        if Subject.objects.filter(subject_name=self.subject_name, subject_class=self.subject_class).exists():
+            return
+        
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f'{self.subject_name} ({self.subject_class}) - {self.teacher_name}'
+
+@receiver(pre_save, sender=Student)
+def check_subjects(sender, instance, **kwargs):
+    """Checks if the subject selected are the subjects allocated to that class"""
+    for subject in instance.subjects.all():
+        if subject.subject_class != instance.current_class:
+            break
+
+@receiver(post_save, sender=Student)
+def assign_continous_assessment(sender, instance, created, **kwargs):
+    """Automatically assings continous assessment to a specific subject to a student."""
+    # need to reconfigure this to ensure once a student is not in a grade all ca for that grade shoul be removed from the student info
+    # or better still it should not be removed, since its a log
+    if created or not created:
+        for subject in instance.subjects.all():
+            ContinousAssessment.objects.create(subject=subject, student=instance)
+            # CA.subject = instance
+            # CA.save()
+            print(f'successful {subject} added')
+            # the print statement is a checker to confirm it is working
+            # print(f'the CA: \n{}')
+
 
 class Grade(models.Model):
     CLASS_SEGMENT = [
@@ -136,24 +151,25 @@ class Grade(models.Model):
         ('Junior Secondary', 'Junior Secondary'),
         ('Senior Secondary', 'Senior Secondary'),
         ]
-    MEDIA_CHOICES = [
-        (
-            "Audio",
-            (
-                ("vinyl", "Vinyl"),
-                ("cd", "CD"),
-            ),
-        ),
-        (
-            "Video",
-            (
-                ("vhs", "VHS Tape"),
-                ("dvd", "DVD"),
-            ),
-        ),
-        ("unknown", "Unknown"),
-        ]
-    category = models.CharField(max_length=200, choices=MEDIA_CHOICES, default="vinyl", null=True)
+    
+    # MEDIA_CHOICES = [
+    #     (
+    #         "Audio",
+    #         (
+    #             ("vinyl", "Vinyl"),
+    #             ("cd", "CD"),
+    #         ),
+    #     ),
+    #     (
+    #         "Video",
+    #         (
+    #             ("vhs", "VHS Tape"),
+    #             ("dvd", "DVD"),
+    #         ),
+    #     ),
+    #     ("unknown", "Unknown"),
+    #     ]
+    category = models.CharField(max_length=200, choices=CLASS_SEGMENT, default="Nursery", null=True)
     name = models.IntegerField()
     # change the name to int, and make it unique, so only one class can be created
 
@@ -162,11 +178,15 @@ class Grade(models.Model):
             'category': self.category,
             'name': self.name
         }
-    for cat, choi in self.MEDIA_CHOICES:
-            print(f'category {cat}, Choices {choi}')
+
+    def save(self, *args, **kwargs):
+        if Grade.objects.filter(category=self.category, name=self.name).exists():
+            return
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        main_category = next((choices for category, choices in self.MEDIA_CHOICES), None)
-        return f'{main_category}: {self.get_category_display()}'
+        # main_category = next((dict(choices).values() for category, choices in self.MEDIA_CHOICES if self.category in dict(choices)), None)
+        return f'{self.category}: {self.name}'
 
     def __unicode__(self):
         return self.name
@@ -192,12 +212,10 @@ class ContinousAssessment(models.Model):
             'total': self.total
         }
 
+    def save(self, *args, **kwargs):
+        if ContinousAssessment.objects.filter(subject=self.subject, student=self.student).exists():
+            return
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f'ContinousAssessment of {self.subject} for {self.student.get_full_name()}'
-
-@receiver(post_save, sender=Subject)
-def assign_continous_assessment(sender, instance, created, **kwargs):
-    """Automatically assings continous assessment to a specific subject to a student."""
-    if created:
-        CA = ContinousAssessment.objects.create()
-        CA.subject = instance
