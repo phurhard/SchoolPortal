@@ -121,28 +121,6 @@ class Subject(models.Model):
     def __str__(self):
         return f'{self.subject_name} ({self.subject_class}) - {self.teacher_name}'
 
-@receiver(pre_save, sender=Student)
-def check_subjects(sender, instance, **kwargs):
-    """Checks if the subject selected are the subjects allocated to that class"""
-    for subject in instance.subjects.all():
-        if subject.subject_class != instance.current_class:
-            break
-
-@receiver(post_save, sender=Student)
-def assign_continous_assessment(sender, instance, created, **kwargs):
-    """Automatically assings continous assessment to a specific subject to a student."""
-    # need to reconfigure this to ensure once a student is not in a grade all ca for that grade shoul be removed from the student info
-    # or better still it should not be removed, since its a log
-    if created or not created:
-        for subject in instance.subjects.all():
-            ContinousAssessment.objects.create(subject=subject, student=instance)
-            # CA.subject = instance
-            # CA.save()
-            print(f'successful {subject} added')
-            # the print statement is a checker to confirm it is working
-            # print(f'the CA: \n{}')
-
-
 class Grade(models.Model):
     CLASS_SEGMENT = [
         ('Pre_JSS', 'Pre_JSS'),
@@ -151,24 +129,7 @@ class Grade(models.Model):
         ('Junior Secondary', 'Junior Secondary'),
         ('Senior Secondary', 'Senior Secondary'),
         ]
-    
-    # MEDIA_CHOICES = [
-    #     (
-    #         "Audio",
-    #         (
-    #             ("vinyl", "Vinyl"),
-    #             ("cd", "CD"),
-    #         ),
-    #     ),
-    #     (
-    #         "Video",
-    #         (
-    #             ("vhs", "VHS Tape"),
-    #             ("dvd", "DVD"),
-    #         ),
-    #     ),
-    #     ("unknown", "Unknown"),
-    #     ]
+
     category = models.CharField(max_length=200, choices=CLASS_SEGMENT, default="Nursery", null=True)
     name = models.IntegerField()
     # change the name to int, and make it unique, so only one class can be created
@@ -185,7 +146,6 @@ class Grade(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        # main_category = next((dict(choices).values() for category, choices in self.MEDIA_CHOICES if self.category in dict(choices)), None)
         return f'{self.category}: {self.name}'
 
     def __unicode__(self):
@@ -219,3 +179,27 @@ class ContinousAssessment(models.Model):
 
     def __str__(self):
         return f'ContinousAssessment of {self.subject} for {self.student.get_full_name()}'
+
+# Receivers
+# Student receivers
+
+@receiver(pre_save, sender=Student)
+def check_subjects(sender, instance, **kwargs):
+    """Checks if the subject selected are the subjects allocated to that class"""
+    for subject in instance.subjects.all():
+        if subject.subject_class != instance.current_class:
+            break
+
+@receiver(post_save, sender=Student)
+def assign_continous_assessment(sender, instance, created, **kwargs):
+    """Automatically assings continous assessment to a specific subject to a student."""
+    # need to reconfigure this to ensure once a student is not in a grade all ca for that grade shoul be removed from the student info
+    # or better still it should not be removed, since its a log
+    if created or not created:
+        for subject in instance.subjects.all():
+            ContinousAssessment.objects.create(subject=subject, student=instance)
+            # CA.subject = instance
+            # CA.save()
+            print(f'successful {subject} added')
+            # the print statement is a checker to confirm it is working
+            # print(f'the CA: \n{}')
