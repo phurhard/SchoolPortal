@@ -52,9 +52,6 @@ def subjectTeacher(request, id):
         for ca in student.continousassessment_set.filter(subject=subject):
             # print(f'This is the CA id: {ca.id}')
             CA.append(ca)
-            # print(f'{ca.total}')
-    # print(f'This is the students Ca: {CA}')
-    # continousassessment = student.continousassessment_set.filter()
     return render(request, 'Staff/subjectTeacher.html', {'students': students, 'subject': subject, 'continousassessment': CA})
 
 
@@ -71,9 +68,6 @@ def ScoresRecord(request):
             print(CA)
             for k, v in caValues.items():
                 """This will set the values of the CA"""
-                # print(f'Key {k}: Value {v}')
-                # print(f'This is the model of {CA}')
-                # print(f'{k} = {v}')
                 setattr(CA, k, v)
             CA.total = int(CA.first_ca) + int(CA.second_ca) + int(CA.third_ca) + int(CA.exams)
             # print(CA.total)

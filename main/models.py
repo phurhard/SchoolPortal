@@ -168,31 +168,39 @@ class ContinousAssessment(models.Model):
 # Receivers
 # Student receivers
 
-@receiver(pre_save, sender=Student)
-def check_subjects(sender, instance, **kwargs):
+# Signal function to handle subject assignment to students
+@receiver(post_save, sender=Student)
+def assign_subjects_to_student(sender, instance, created, **kwargs):
+    # If the student is newly created, assign subjects for their class
+    # student_class = instance.current_class
+    if created:
+        subjects_for_class = Subject.objects.filter(subject_class=instance.current_class)
+        instance.subjects.add(*subjects_for_class)
+
+@receiver(post_save, sender=Student)
+def check_subjects(sender, instance, created, **kwargs):
     """Checks if the subject selected are the subjects allocated to that class"""
     for subject in instance.subjects.all():
         if subject.subject_class != instance.current_class:
-            break # find a way to stop all the process altogether so other functions are not called
-
-# Signal function to handle subject assignment to students
-@receiver(pre_save, sender=Student)
-def assign_subjects_to_student(sender, instance, created, **kwargs):
-    # If the student is newly created, assign subjects for their class
-    student_class = instance.current_class
-    subjects_for_class = Subject.objects.filter(subject_class=student_class)
-    instance.subjects.add(*subjects_for_class)
+            del subject # find a way to stop all the process altogether so other functions are not called
 
 @receiver(post_save, sender=Student)
 def assign_continous_assessment(sender, instance, created, **kwargs):
     """Automatically assings continous assessment to a specific subject to a student."""
     # need to reconfigure this to ensure once a student is not in a grade all ca for that grade shoul be removed from the student info
     # or better still it should not be removed, since its a log
-    if created or not created:
+    if created:
+        """Assigns CA to students if they are recently created"""
         for subject in instance.subjects.all():
             ContinousAssessment.objects.create(subject=subject, student=instance)
-            # CA.subject = instance
-            # CA.save()
-            print(f'successful {subject} added')
-            # the print statement is a checker to confirm it is working
-            # print(f'the CA: \n{}')
+    else:
+        """Check if there is CA that isn't suppose to be there
+        like CA for a previous class, or a subject that the student is not taking"""
+        # first assign ca to all subjects
+        for subject in instance.subjects.all():
+            ContinousAssessment.objects.create(subject=subject, student=instance)
+
+        # then remove ca that those not have subject
+        for ca in instance.continousassessment_set.all():
+            if ca.subject not in instance.subjects.all():
+                del ca
