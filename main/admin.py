@@ -12,7 +12,11 @@ class GradeAdmin(admin.ModelAdmin):
 class SubjectAdmin(admin.ModelAdmin):
     list_filter = ['subject_name', 'teacher_name', 'subject_class']
 
+# class StudentSubjectAdmin(admin.ModelAdmin):
+#     list_filter = ['subject', 'student']
+
 admin.site.register(CustomUser, CustomAdmin)
 admin.site.register(ContinousAssessment, ContinousAssessmentAdmin)
 admin.site.register(Grade, GradeAdmin)
 admin.site.register(Subject, SubjectAdmin)
+# admin.site.register(StudentSubjects, StudentSubjectAdmin)

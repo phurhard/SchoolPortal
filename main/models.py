@@ -106,6 +106,9 @@ class Subject(models.Model):
     def __str__(self):
         return f'{self.subject_name} ({self.subject_class}) - {self.teacher_name}'
 
+# class StudentSubjects(models.Model):
+#     student = models.ForeignKey('Student', related_name='student', on_delete=models.CASCADE)
+#     subject = models.ForeignKey('Subject', related_name='subject', on_delete=models.CASCADE)
 class Grade(models.Model):
     CLASS_SEGMENT = [
         ('Pre_JSS', 'Pre_JSS'),
