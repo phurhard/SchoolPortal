@@ -161,4 +161,5 @@ def changePassword(request):
     new_password = data.get('new_password')
     new_password_confirm = data.get('new_password_confirm')
     print(f'The data: \n{data}')
+    
     return render(request, 'Authentication/change_password.html')
