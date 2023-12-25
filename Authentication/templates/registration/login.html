@@ -6,7 +6,7 @@
 
 <form method="post" class='row g-3'>
     {% csrf_token %}
-    {{ form }}
+    {{ form }}|{{ crispy }}
     <p class="form-text">Don't have an account yet? Create one <a href="/">Here</a>!</p>
     <button type="submit" class="btn btn-success btn-rounded">Login</button>
 </form>

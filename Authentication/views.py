@@ -152,3 +152,13 @@ def login(request):
 def user_logout(request):
     logout(request)
     return redirect('/login')
+
+def changePassword(request):
+    """changes the password of the user"""
+    data = request.POST
+    reg_num = data.get('reg_num')
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+    new_password_confirm = data.get('new_password_confirm')
+    print(f'The data: \n{data}')
+    return render(request, 'Authentication/change_password.html')
