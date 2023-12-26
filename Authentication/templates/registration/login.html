@@ -6,8 +6,14 @@
 
 <form method="post" class='row g-3'>
     {% csrf_token %}
-    {{ form }}|{{ crispy }}
-    <p class="form-text">Don't have an account yet? Create one <a href="/">Here</a>!</p>
+    {{ form }}
+    <div>
+        <p><a href="{% url 'forgot_password' %}">Forgotten Password?</a></p>
+    </div>
     <button type="submit" class="btn btn-success btn-rounded">Login</button>
 </form>
+
+<div>
+    <p class="form-text">Don't have an account yet? Create one <a href="/">Here</a>!</p>
+</div>
 {% endblock %}

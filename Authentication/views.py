@@ -186,3 +186,34 @@ def changePassword(request, id):
         print('The data')
         # return HttpResponse('error')
         return render(request, 'Authentication/change_password.html', {'user_id': id})
+
+
+def forgotPassword(request):
+    """changes the password of the user"""
+    if request.method == 'POST':
+        reg_num = request.POST.get('reg_num')
+        new_password = request.POST.get('new_password')
+        try:
+            user = CustomUser.objects.get(reg_num=reg_num)
+            if user:
+                # user.set_password(new_password)
+                # user.save()
+                print('here')
+                return JsonResponse({
+                    "status": 200,
+                    "message": "Password changed"
+                })
+            else:
+                return JsonResponse({
+                    'status': 404,
+                    'message': 'No user found'
+                })
+        except ObjectDoesNotExist:
+            return JsonResponse({
+                "status": 404,
+                "message": "No ffuser found"
+                })
+    else:
+        print('The data')
+        # return HttpResponse('error')
+        return render(request, 'Authentication/forgotten_password.html')
