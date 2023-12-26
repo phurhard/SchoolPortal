@@ -1,17 +1,32 @@
 {% extends 'Authentication/base.html' %}
+{% load static %}
 
-{% block title %}signup|Student{% endblock %}
+{% block link%}
+    <link rel="stylesheet" type="text/css" href="{% static 'Authentication/css/signupStudent.css' %}">
+{% endblock %}
+
+{% block title %}
+    SignUp | Student
+{% endblock %}
 
 {% block content %}
-    {% load static %}
     {% load crispy_forms_tags %}
-<div class="form-group">
-    <h2>Hello, Welcome. <br/> Signup to continue</h2>
-    <form method="post" class="your-form-class">
-        {% csrf_token %}
-        {{ data|crispy }}
-        <p>Have an account? Login <a href="/login">Here</a>!</p>
-        <button type="submit" class="btn btn-success">Register</button>
-    </form>
-</div>
+    <div class="container content-container">
+
+        <div class="signup-form">
+            <div class="welcome-caption">
+                <h2 class="text-center-mb-3">Hello, <small> Prospective Learned member of the society <br/>Welcome to our school</small></h2>
+            </div>
+            <form method="post" class="your-form-class">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ data|crispy }}
+                </div>
+                <div class="mb-3">
+                    <p>Have an account? Login <a href="/login">Here</a>!</p>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Register</button>
+            </form>
+        </div>
+    </div>
 {% endblock %}
