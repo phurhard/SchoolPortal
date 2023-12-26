@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse, JsonResponse
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.hashers import check_password
 from django.contrib import messages
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as auth_login
@@ -155,29 +155,34 @@ def user_logout(request):
     return redirect('/login')
 
 
-def changePassword(request):
+def changePassword(request, id):
     """changes the password of the user"""
     if request.method == 'POST':
-        reg_num = request.POST.get('reg_num')
-        user = CustomUser.objects.get(reg_num=reg_num)
-        print('Got here \n')
-        if user:
-            print('Got here 1\n')
-            user.set_password(request.POST.get('password'))
-            print('Got here 2\n')
+        old_password = request.POST.get('old_password')
+        password = request.POST.get('new_password')
+        try:
+            user = CustomUser.objects.get(pk=id)
+            password_check = check_password(old_password, user.password)
+            print(password_check)
+            if password_check:
+                # user.set_password(password)
+                # user.save()
+                print('here')
+                return JsonResponse({
+                    "status": 200,
+                    "message": "Password changed"
+                })
+            else:
+                return JsonResponse({
+                    'status': 400,
+                    'message': 'Password did not match'
+                })
+        except ObjectDoesNotExist:
             return JsonResponse({
-                "status": 200,
-                "message": "Password changed"
-            })
-        else:
-            print('Got here 3\n')
-            return HttpResponse({"error": "No user found"})
+                "status": 404,
+                "message": "No user found"
+                })
     else:
-        data = request.POST
-        reg_num = data.get('reg_num')
-        old_password = data.get('old_password')
-        new_password = data.get('new_password')
-        new_password_confirm = data.get('new_password_confirm')
-        print(f'The data: \n{data}')
+        print('The data')
         # return HttpResponse('error')
-        return render(request, 'Authentication/change_password.html')
+        return render(request, 'Authentication/change_password.html', {'user_id': id})

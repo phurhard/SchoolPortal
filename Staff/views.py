@@ -41,6 +41,7 @@ def teachers_list(request):
         """Return to profile page"""
         return redirect('/staff')
 
+
 @login_required
 @teacher_only
 def subjectTeacher(request, id):
