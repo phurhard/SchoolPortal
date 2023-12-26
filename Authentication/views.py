@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import Http404, HttpResponse
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.contrib.auth import authenticate, logout
@@ -6,7 +7,7 @@ from django.contrib.auth import login as auth_login
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from main.models import CustomUser, Teacher, Student
 from .forms import LoginForm, TeacherSignUpForm, StudentSignUpForm
-import jwt
+# import jwt
 import datetime
 from .matric_no_generator import matric_no
 # Create your views here.
@@ -155,6 +156,14 @@ def user_logout(request):
 
 def changePassword(request):
     """changes the password of the user"""
+    if request.method == 'POST':
+        reg_num = request.POST.get('reg_num')
+        user = CustomUser.objects.get(reg_num=reg_num)
+        if user:
+            user.set_password(request.POST.get('password'))
+        else:
+            return HttpResponse('No user found'), 404
+        pass
     data = request.POST
     reg_num = data.get('reg_num')
     old_password = data.get('old_password')

@@ -45,35 +45,13 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'Authentication.apps.AuthenticationConfig',
     'corsheaders',
-    'wkhtmltopdf',
     'Staff.apps.StaffConfig',
     'Student.apps.StudentConfig',
     'crispy_forms',
     'crispy_bootstrap5',
-    'rest_framework_simplejwt',
-    'drf_yasg',
 ]
 
 AUTH_USER_MODEL = 'main.CustomUser'
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-        'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.TemplateHTMLRenderer',  # Add this line for HTML rendering
-    ),
-    
-}
-SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS' :{
-        'Basic': {
-            'type': 'basic',
-           'scheme': 'basic',
-        }
-    }
-}
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 
