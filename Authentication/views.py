@@ -75,8 +75,11 @@ class LogoutView(APIView):
         }
         return response
 '''
+
+
 def index(request):
     return render(request, 'Authentication/index.html')
+
 
 def signupTeacher(request):
     """The signup logic for a teacher
@@ -88,11 +91,8 @@ def signupTeacher(request):
         if data.is_valid():
             user = data.save(commit=False)
             user.reg_num = matric_no(request, user)
-            # user.is_staff = True
             user.save()
-            # messages.success(request, f'You can use this to login {user.reg_num}')
             return render(request, 'Authentication/index.html', {'user': user})
-            # return redirect('/login')
         else:
             return redirect('/auth/staff')
     else:

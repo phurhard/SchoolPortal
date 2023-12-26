@@ -1,13 +1,30 @@
 {% extends 'Authentication/base.html' %}
-{% block title %}Auth|Landing page{% endblock %}
+{% load static %}
+{% block link %}
+    <link rel="stylesheet" type="text/css" href="{% static 'Authentication/css/credentials.css' %}">
+{% endblock %}
+{% block title %}
+    Auth - Success
+{% endblock %}
 
 {% block content %}
-<p>Welcome {{ user.get_full_name }} you have successfully signed up</p>
-<p>This is your login details, do ensure you copy it down somewhere safe.</p>
-<p>Reg Num: {{ user.reg_num }}</p>
-<p>Password: {{ user.password }}</p>
-{% comment %} find a way to decode the Password before it is sent to the frontend {% endcomment %}
+<div class="container content-container">
+    <div class="card">
+        <div class="card-header text-light bg-primary ">
+            <h5>Signup  - Success | Login credentials</h5>
+        </div>
+        <div class="card-title mt-3">
+            <h5>Welcome {{ user.get_full_name }} you have successfully signed up</h5>
+        </div>
+        <div class="card-body">
+            <p>This is your login details, do ensure you copy it down somewhere safe.</p>
+            <p>Reg Num: {{ user.reg_num }}</p>
+            <p>Password: {{ user.password }}</p>
+        </div>
 
-<p>Please click <a href="/login/">here</a> to login.</p>
-
+        <div class="card-footer text-body-secondary">
+            <p class="text-end">Please click <a class="btn btn-primary" href="/login/">here</a> to login.</p>
+        </div>
+    </div>
+</div>
 {% endblock %}
