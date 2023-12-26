@@ -1,14 +1,32 @@
 {% extends 'Authentication/base.html' %}
-{% block title %}signup|staff{% endblock %}
-{% comment %} {% load crispy_forms_tags %} {% endcomment %}
+{% load static %}
+
+{% block link%}
+    <link rel="stylesheet" type="text/css" href="{% static 'Authentication/css/signupStudent.css' %}">
+{% endblock %}
+
+{% block title %}
+    SignUp | Staff
+{% endblock %}
 
 {% block content %}
-<form method="post">
-    {% csrf_token %}
-    {{ data }}{{ crispy_forms_tags}}
-    <p>Have an account? Login <a href="/login">Here</a>!</p>
-    <button type="submit" class="btn btn-success">Register</button>
-    <!-- This button automatically calls the post of form element, need to find how to make use of a callback function
-    so when the data has been sent to the backend it should display alert. or use the button out of the form -->
-</form>
+    {% load crispy_forms_tags %}
+    <div class="container content-container">
+
+        <div class="signup-form">
+            <div class="welcome-caption">
+                <h2 class="text-center-mb-3">Hello, <small> Prospective Learned Member of the Society <br/>Welcome to our school</small></h2>
+            </div>
+            <form method="post" class="your-form-class">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ data|crispy }}
+                </div>
+                <div class="mb-3">
+                    <p>Have an account? Login <a href="/login">Here</a>!</p>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Register</button>
+            </form>
+        </div>
+    </div>
 {% endblock %}
