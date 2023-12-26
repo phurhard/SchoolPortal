@@ -1,11 +1,11 @@
 {% extends 'Authentication/base.html' %}
 {% block title %}signup|staff{% endblock %}
-{% load crispy_forms_tags %}
+{% comment %} {% load crispy_forms_tags %} {% endcomment %}
 
 {% block content %}
 <form method="post">
     {% csrf_token %}
-    {{ data }}
+    {{ data }}{{ crispy_forms_tags}}
     <p>Have an account? Login <a href="/login">Here</a>!</p>
     <button type="submit" class="btn btn-success">Register</button>
     <!-- This button automatically calls the post of form element, need to find how to make use of a callback function
