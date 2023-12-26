@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from main.models import ContinousAssessment, Teacher, Subject, Student, CustomUser
-from django.http import Http404, HttpResponse
+from main.models import ContinousAssessment, Teacher, Subject
+from django.http import Http404, HttpResponse, JsonResponse
 import json
-from django.views.decorators.csrf import csrf_exempt
+from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.template import engines
 from Staff.decorators import teacher_only
@@ -10,10 +10,12 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
+
 def index(request):
     '''this is the landing page for staffs'''
     print(request.user)
     return render(request, 'Staff/index.html')
+
 
 @login_required
 @teacher_only
@@ -30,8 +32,8 @@ def teacher_profile(request):
             raise Http404('You are not authenticated for this page')
     return render(request, 'Staff/teacherProfile.html', {'teacher': teacher, 'subjects': subjects})
 
+
 @login_required
-# @teacher_only
 def teachers_list(request):
     if request.user.is_superuser and request.user.is_authenticated:
         """Only accesible to an admin"""
@@ -59,18 +61,33 @@ def subjectTeacher(request, id):
 @login_required
 @teacher_only
 def ScoresRecord(request):
-    """This function is the view for editing the CA and exams of students by teachers
-    it saves it to the database"""
+    """This function is the view for editing the CA and exams of students by
+    teachers it saves it to the database"""
 
     if request.method == 'POST':
         data = json.loads(request.body)
-        for caID, caValues in data.items():
-            CA = ContinousAssessment.objects.get(id=caID)
-            print(CA)
-            for k, v in caValues.items():
-                """This will set the values of the CA"""
-                setattr(CA, k, v)
-            CA.total = int(CA.first_ca) + int(CA.second_ca) + int(CA.third_ca) + int(CA.exams)
-            # print(CA.total)
-            CA.save()
-    return HttpResponse('Success')
+        try:
+            with transaction.atomic():
+                for caID, caValues in data.items():
+                    try:
+                        CA = ContinousAssessment.objects.get(id=caID)
+                        for k, v in caValues.items():
+                            """This will set the values of the CA"""
+                            setattr(CA, k, v)
+                        CA.total = int(CA.first_ca) + int(CA.second_ca) +\
+                            int(CA.third_ca) + int(CA.exams)
+                        CA.save()
+                    except ObjectDoesNotExist:
+                        pass
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=500)
+        return JsonResponse({
+            'status': 'success',
+        })
+    return JsonResponse({
+        'status': 'error',
+        'message': "Invalid Request"
+    }, status=400)
