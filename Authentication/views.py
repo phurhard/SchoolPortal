@@ -98,11 +98,12 @@ def signupTeacher(request):
     else:
         data = TeacherSignUpForm()
     return render(request, 'registration/teacherPage.html', {'data': data})
-    
-    
+
+
 def signupStudent(request):
     """Registers a student to the school database
-        The school will be the one to inform students of their login credentials
+        The school will be the one to inform students of
+        their login credentials
     """
     if request.method == 'POST':
         data = StudentSignUpForm(request.POST)
@@ -114,27 +115,28 @@ def signupStudent(request):
             user.save()
 
             return render(request, 'Authentication/index.html', {'user': user})
-            # return redirect('/login')
         else:
             return redirect('/auth/student')
     else:
         data = StudentSignUpForm()
     return render(request, 'registration/studentPage.html', {'data': data})
 
+
 def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            reg_num = form.cleaned_data.get('Reg_num')
+            reg_num = form.cleaned_data.get('reg_num')
             password = form.cleaned_data.get('password')
-            
+
             user = authenticate(request, reg_num=reg_num, password=password)
-            print(user)
-            print(form.cleaned_data)
+            # print(user)
+            # print(form.cleaned_data)
             if user is None:
-                
+
                 form.add_error(None, 'Invalid username or password')
-                return render(request, 'registration/login.html', {'form': form})
+                return render(request, 'registration/login.html',
+                              {'form': form})
             else:
                 auth_login(request, user)
                 try:
@@ -149,6 +151,7 @@ def login(request):
     else:
         form = LoginForm()
     return render(request, 'registration/login.html', {'form': form})
+
 
 def user_logout(request):
     logout(request)
@@ -165,8 +168,8 @@ def changePassword(request, id):
             password_check = check_password(old_password, user.password)
             print(password_check)
             if password_check:
-                # user.set_password(password)
-                # user.save()
+                user.set_password(password)
+                user.save()
                 print('here')
                 return JsonResponse({
                     "status": 200,
@@ -196,9 +199,8 @@ def forgotPassword(request):
         try:
             user = CustomUser.objects.get(reg_num=reg_num)
             if user:
-                # user.set_password(new_password)
-                # user.save()
-                print('here')
+                user.set_password(new_password)
+                user.save()
                 return JsonResponse({
                     "status": 200,
                     "message": "Password changed"
