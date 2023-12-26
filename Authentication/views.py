@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.contrib.auth import authenticate, logout
@@ -154,21 +154,30 @@ def user_logout(request):
     logout(request)
     return redirect('/login')
 
+
 def changePassword(request):
     """changes the password of the user"""
     if request.method == 'POST':
         reg_num = request.POST.get('reg_num')
         user = CustomUser.objects.get(reg_num=reg_num)
+        print('Got here \n')
         if user:
+            print('Got here 1\n')
             user.set_password(request.POST.get('password'))
+            print('Got here 2\n')
+            return JsonResponse({
+                "status": 200,
+                "message": "Password changed"
+            })
         else:
-            return HttpResponse('No user found'), 404
-        pass
-    data = request.POST
-    reg_num = data.get('reg_num')
-    old_password = data.get('old_password')
-    new_password = data.get('new_password')
-    new_password_confirm = data.get('new_password_confirm')
-    print(f'The data: \n{data}')
-    
-    return render(request, 'Authentication/change_password.html')
+            print('Got here 3\n')
+            return HttpResponse({"error": "No user found"})
+    else:
+        data = request.POST
+        reg_num = data.get('reg_num')
+        old_password = data.get('old_password')
+        new_password = data.get('new_password')
+        new_password_confirm = data.get('new_password_confirm')
+        print(f'The data: \n{data}')
+        # return HttpResponse('error')
+        return render(request, 'Authentication/change_password.html')
