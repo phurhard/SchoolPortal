@@ -1,19 +1,38 @@
 {% extends 'Authentication/base.html' %}
-{% block title %}Al-Iman | Login{% endblock %}
-{% load crispy_forms_tags %}
+{% load static %}
+
+{% block link %}
+    <link rel="stylesheet" type="text/css" href="{% static 'Authentication/css/login.css' %}">
+{% endblock link %}
+
+{% block title %}
+    Al-Iman | Login
+{% endblock %}
 
 {% block content %}
-
-<form method="post" class='row g-3'>
-    {% csrf_token %}
-    {{ form }}
-    <div>
-        <p><a href="{% url 'forgot_password' %}">Forgotten Password?</a></p>
+    {% load crispy_forms_tags %}
+<div class="container">
+    <div class="login-form">
+        <h2 class="text-center-mb-3">Welcome Back,<br/> Let's get you logged in</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form|crispy }}
+            </div>
+            <div class="mb-3">
+                <p class="form-text"><a href="{% url 'forgot_password' %}">Forgotten Password?</a></p>
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-success">Login</button>
+            </div>
+        </form>
     </div>
-    <button type="submit" class="btn btn-success btn-rounded">Login</button>
-</form>
+    <div>
+        <p class="text">Don't have an account yet? Create one <a href="/">Here</a>!</p>
+    </div>
 
-<div>
-    <p class="form-text">Don't have an account yet? Create one <a href="/">Here</a>!</p>
+    <div class="image"></div>
+
+    </div>
 </div>
 {% endblock %}
