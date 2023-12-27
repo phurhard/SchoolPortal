@@ -65,7 +65,9 @@ def ScoresRecord(request):
     teachers it saves it to the database"""
 
     if request.method == 'POST':
+        print(request.POST)
         data = json.loads(request.body)
+        print(f'data: {data}')
         try:
             with transaction.atomic():
                 for caID, caValues in data.items():
@@ -87,6 +89,8 @@ def ScoresRecord(request):
         return JsonResponse({
             'status': 'success',
         })
+    else:
+        print(request.POST)
     return JsonResponse({
         'status': 'error',
         'message': "Invalid Request"

@@ -4,30 +4,33 @@
 <h1>Teacher: {{ subject.teacher_name }}</h1>
 <h2>Subject/Class: {{ subject.subject_name }} {{ subject.subject_class }}</h2>
 <form action='/subject/{{ subject.id }}/students/' method='GET'>
-    {% csrf_token %}
     <input type='button' onclick='edit()' id='edit-btn' class='btn btn-primary' value='Edit the scores'/>
 <table class='table' id='table'>
     <thead>
-        <th>Student name</th>
-        <th>Subject name</th>
-        <th>First CA</th>
-        <th>Second CA</th>
-        <th>Third CA</th>
-        <th>Exams</th>
-        <th>Total</th>
+        <tr>
+            <th scope="col">Student name</th>
+            <th scope="col">Subject name</th>
+            <th scope="col">First CA</th>
+            <th scope="col">Second CA</th>
+            <th scope="col">Third CA</th>
+            <th scope="col">Exams</th>
+            <th scope="col">Total</th>
+        </tr>
     </thead>
     <tbody>
-            {% for CA in continousassessment %}
-                <tr data-id='{{ CA.id }}'>
-                    <td>{{ CA.student.get_full_name }}</td>
-                    <td>{{ CA.subject.subject_name }}</td>
-                    <td class='scores' contenteditable="false" onblur="handleTestInput(this)">{{ CA.first_ca }}</td>
-                    <td class='scores' contenteditable="false" onblur="handleTestInput(this)">{{ CA.second_ca }}</td>
-                    <td class='scores' contenteditable="false" onblur="handleTestInput(this)">{{ CA.third_ca }}</td>
-                    <td class='scores' contenteditable="false" onblur="handleExamInput(this)">{{ CA.exams }}</td>
-                    <td contenteditable="false">{{ CA.total }}</td>
-                </tr>
-            {% endfor %}
+        {% csrf_token %}
+
+        {% for CA in continousassessment %}
+            <tr data-id='{{ CA.id }}'>
+                <th scope="row">{{ CA.student.get_full_name }}</th>
+                <td>{{ CA.subject.subject_name }}</td>
+                <td class='scores' contenteditable="false" onblur="handleTestInput(this)">{{ CA.first_ca }}</td>
+                <td class='scores' contenteditable="false" onblur="handleTestInput(this)">{{ CA.second_ca }}</td>
+                <td class='scores' contenteditable="false" onblur="handleTestInput(this)">{{ CA.third_ca }}</td>
+                <td class='scores' contenteditable="false" onblur="handleExamInput(this)">{{ CA.exams }}</td>
+                <td contenteditable="false">{{ CA.total }}</td>
+            </tr>
+        {% endfor %}
     </tbody>
 </table>
 </form>
@@ -100,8 +103,12 @@
 
     function saveData() {
         const data_arr = {};
-        const table = document.getElementById('table');
-        const rows = table.getElementsByTagName('tr');
+        const tbody = table.getElementsByTagName('tbody')[0];
+        const token = tbody.querySelector('input[type=hidden]').value;
+        data_arr['csrfmiddlewaretoken'] = token;
+        console.log(tbody)
+        // console.log(forms)
+        const rows = tbody.getElementsByTagName('tr');
         for (let i = 1; i < rows.length; i++) {
             const cells = rows[i].getElementsByTagName('td');
             const ca_id = rows[i].dataset.id;
@@ -135,14 +142,15 @@
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(saveData),
+            body: saveData,
         }
         )
+        .then(res => console.log('res', res))
         .then(data => {
-            console.log(data);
-            setTimeout(function() {
-                location.reload();
-            }, 50000);
+            console.log('data:', data);
+            // setTimeout(function() {
+            //     location.reload();
+            // }, 50000);
         })
         .catch(err => {console.error(err);});
 

@@ -1,29 +1,40 @@
 {% extends "main/base.html" %}
 {% block content %}
-<h2>Teacher Profile</h2>
-<p>Name: {{ teacher.get_full_name }}</p>
-<p>Email: {{ teacher.email }}</p>
-<p>Reg Num: {{ teacher.reg_num }}</p>
-<p><a href="/staff/class/">Print schedule</a></p>
-<p>Subjects:</p>
-<table class="table">
-    <thead>
-        <th>Subject Name</th>
-        <th>Class</th>
-        <th>No of students</th>
-    </thead>
-    <tbody>
-        <tr>
-            {% for subject in subjects %}
+<div class="container content-container">
+    <div class="row">
+        <h5 class="text-secondary">My Dashboard</h5>
+        <div>
+        <p>Name: {{ teacher.get_full_name }}</p>
+        <p>Email: {{ teacher.email }}</p>
+        <p>Reg Num: {{ teacher.reg_num }}</p>
+        <p><a href="/staff/class/">Print schedule</a></p>
+        </div>
+    </div>
+    <div class="row">
+        <p class="text-secondary">Subjects:</p>
+        <table class="table table-hover table-bordered">
+            <caption>List of subjects</caption>
+            <thead class="table-dark">
+                <tr>
+                    <th scope='col'>Subject Name</th>
+                    <th scope='col'>Class</th>
+                    <th scope='col'>No of students</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for subject in subjects %}
 
-            <td><a href="{% url 'subjectStudents' subject.id %}">{{ subject.subject_name }}</a></td>
-            <td>{{subject.subject_class}}</td>
-            <td>
-                {{subject.student_set.all|length}}
-            </td>
-        </tr>
-            {% endfor %}
-        
-    </tbody>
-</table>
+                    <th scope='row'><a href="{% url 'subjectStudents' subject.id %}" class="link-primary" style="text-decoration: none;">{{ subject.subject_name }}</a></th>
+                    <td>{{subject.subject_class}}</td>
+                    <td>
+                        {{subject.student_set.all|length}}
+                    </td>
+                </tr>
+                    {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

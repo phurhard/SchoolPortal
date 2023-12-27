@@ -91,6 +91,8 @@ def signupTeacher(request):
         if data.is_valid():
             user = data.save(commit=False)
             user.reg_num = matric_no(request, user)
+            # Users will change password once they login
+            user.set_password('admin321')
             user.save()
             return render(request, 'Authentication/index.html', {'user': user})
         else:
@@ -112,8 +114,9 @@ def signupStudent(request):
         if data.is_valid():
             user = data.save(commit=False)
             user.reg_num = matric_no(request, user)
+            # Users will change password once they login
+            user.set_password('admin321')
             user.save()
-
             return render(request, 'Authentication/index.html', {'user': user})
         else:
             return redirect('/auth/student')
@@ -161,16 +164,15 @@ def user_logout(request):
 def changePassword(request, id):
     """changes the password of the user"""
     if request.method == 'POST':
+        print(request.POST)
         old_password = request.POST.get('old_password')
         password = request.POST.get('new_password')
         try:
             user = CustomUser.objects.get(pk=id)
             password_check = check_password(old_password, user.password)
-            print(password_check)
             if password_check:
                 user.set_password(password)
                 user.save()
-                print('here')
                 return JsonResponse({
                     "status": 200,
                     "message": "Password changed"
@@ -186,9 +188,8 @@ def changePassword(request, id):
                 "message": "No user found"
                 })
     else:
-        print('The data')
-        # return HttpResponse('error')
-        return render(request, 'Authentication/change_password.html', {'user_id': id})
+        return render(request, 'Authentication/change_password.html',
+                      {'user_id': id})
 
 
 def forgotPassword(request):
