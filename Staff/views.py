@@ -65,8 +65,9 @@ def ScoresRecord(request):
     teachers it saves it to the database"""
 
     if request.method == 'POST':
-        print(request.POST)
-        data = json.loads(request.body)
+        # data = json.loads(request.body)
+        data = request.POST
+        print(f'body: {request.body}')
         print(f'data: {data}')
         try:
             with transaction.atomic():

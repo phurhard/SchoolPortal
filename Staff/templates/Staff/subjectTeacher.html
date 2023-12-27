@@ -107,7 +107,7 @@
         const token = tbody.querySelector('input[type=hidden]').value;
         data_arr['csrfmiddlewaretoken'] = token;
         console.log(tbody)
-        // console.log(forms)
+        
         const rows = tbody.getElementsByTagName('tr');
         for (let i = 1; i < rows.length; i++) {
             const cells = rows[i].getElementsByTagName('td');
@@ -136,11 +136,12 @@
 
     function sendDataToBackend(saveData) {
         console.log('sending data to backend: ', saveData);
-        
+        const csrfToken = "{{ csrf_token }}";
         fetch('/record/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
             },
             body: saveData,
         }
