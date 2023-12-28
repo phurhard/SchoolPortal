@@ -2,37 +2,40 @@
 {% load static %}
 
 {% block link %}
-    <link rel="stylesheet" type="text/css" href="{% static 'Authentication/css/login.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'Authentication/css/login.css' %}">
 {% endblock link %}
 
 {% block title %}
-    Al-Iman | Login
+Al-Iman | Login
 {% endblock %}
 
 {% block content %}
-    {% load crispy_forms_tags %}
-    <div class="container">
-        <div class="login-form">
-            <h2 class="text-center-mb-3">Welcome Back,<br/> Let's get you logged in</h2>
-            <form method="post">
-                {% csrf_token %}
-                <div class="mb-3">
-                    {{ form|crispy }}
-                </div>
-                <div class="mb-3">
-                    <p class="form-text"><a href="{% url 'forgot_password' %}">Forgotten Password?</a></p>
-                </div>
-                <div class="mb-3">
-                    <button type="submit" class="btn btn-success">Login</button>
-                </div>
-            </form>
-        </div>
+{% load crispy_forms_tags %}
+<div class="container">
+    <div class="login-form">
+        <h2 class="text-center-mb-3">Welcome Back,<br /> Let's get you logged in</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form|crispy }}
+            </div>
+            <div class="mb-3">
+                <p class="form-text"><a href="{% url 'forgot_password' %}">Forgotten Password?</a></p>
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-success">Login</button>
+            </div>
+        </form>
         <div>
             <p class="text">Don't have an account yet? Create one <a href="/">Here</a>!</p>
         </div>
-    
-        <div class="image"></div>
-    
-        </div>
     </div>
+
+
+    <div class="image-container">
+        <img src="{% static 'main/img/al_iman_logo.png' %}" alt="Al_Iman_logo" />
+    </div>
+
+</div>
+
 {% endblock %}
