@@ -27,6 +27,7 @@ class CustomUserManager(BaseUserManager):
         
         return self.create_user(reg_num, **extra_params)
 
+
 class CustomUser(AbstractUser):
     other_name = models.CharField(max_length=255, default='', null=True)
     reg_num = models.CharField(max_length=255, unique=True)
@@ -72,6 +73,7 @@ class Teacher(CustomUser):
     class Meta:
         db_table = 'Teacher'
 
+
 class Student(CustomUser):
     current_class = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True)
     subjects = models.ManyToManyField('Subject')
@@ -84,6 +86,7 @@ class Student(CustomUser):
 
     class Meta:
         db_table = 'Student'
+
 
 class Subject(models.Model):
     subject_name = models.CharField(max_length=100)
@@ -105,6 +108,7 @@ class Subject(models.Model):
 
     def __str__(self):
         return f'{self.subject_name} ({self.subject_class}) - {self.teacher_name}'
+
 
 class Grade(models.Model):
     CLASS_SEGMENT = [
@@ -133,9 +137,6 @@ class Grade(models.Model):
     def __str__(self):
         return f'{self.category}: {self.name}'
 
-    def __unicode__(self):
-        return self.name
-
 
 class ContinousAssessment(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, default=None)
@@ -158,15 +159,18 @@ class ContinousAssessment(models.Model):
         }
 
     def save(self, *args, **kwargs):
-        if ContinousAssessment.objects.filter(subject=self.subject, student=self.student).exists():
-            return
+        if ContinousAssessment.objects.filter(subject=self.subject,
+                                              student=self.student).exists():
+            pass
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'ContinousAssessment of {self.subject} for {self.student.get_full_name()}'
+        return f'ContinousAssessment of {self.subject} for\
+    {self.student.get_full_name()}'
 
 # Receivers
 # Student receivers
+
 
 # Signal function to handle subject assignment to students
 @receiver(post_save, sender=Student)

@@ -1,160 +1,50 @@
 {% extends "main/base.html" %}
+{% load static %}
 {% block title %}Al-Iman | My Students{% endblock %}
 {% block content %}
-<h1>Teacher: {{ subject.teacher_name }}</h1>
-<h2>Subject/Class: {{ subject.subject_name }} {{ subject.subject_class }}</h2>
-<form action='/subject/{{ subject.id }}/students/' method='GET'>
-    <input type='button' onclick='edit()' id='edit-btn' class='btn btn-primary' value='Edit the scores'/>
-<table class='table' id='table'>
-    <thead>
-        <tr>
-            <th scope="col">Student name</th>
-            <th scope="col">Subject name</th>
-            <th scope="col">First CA</th>
-            <th scope="col">Second CA</th>
-            <th scope="col">Third CA</th>
-            <th scope="col">Exams</th>
-            <th scope="col">Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% csrf_token %}
-
-        {% for CA in continousassessment %}
-            <tr data-id='{{ CA.id }}'>
-                <th scope="row">{{ CA.student.get_full_name }}</th>
-                <td>{{ CA.subject.subject_name }}</td>
-                <td class='scores' contenteditable="false" onblur="handleTestInput(this)">{{ CA.first_ca }}</td>
-                <td class='scores' contenteditable="false" onblur="handleTestInput(this)">{{ CA.second_ca }}</td>
-                <td class='scores' contenteditable="false" onblur="handleTestInput(this)">{{ CA.third_ca }}</td>
-                <td class='scores' contenteditable="false" onblur="handleExamInput(this)">{{ CA.exams }}</td>
-                <td contenteditable="false">{{ CA.total }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-</form>
-<button type="submit" onclick='sendDataToBackend(saveData())' class="btn btn-primary">Save</button>
+<div class="container">
+    <div class="mb-3">
+        <h5 class="text-secondary">Students Result</h5>
+        <p class="mt-6">Teacher:<b> {{ subject.teacher_name }}</b></p>
+        <p>Subject: {{ subject.subject_name }}</p>
+        <p>Class: {{ subject.subject_class }}</p>
+    </div>
+    <form action='/subject/{{ subject.id }}/students/' method='GET'>
+        <input type='button' id='edit-btn' class='btn btn-primary' value='Edit the scores'/>
+        <table class='table' id='table'>
+            <thead>
+                <tr>
+                    <th scope="col">Student name</th>
+                    <th scope="col">Subject name</th>
+                    <th scope="col">First CA</th>
+                    <th scope="col">Second CA</th>
+                    <th scope="col">Third CA</th>
+                    <th scope="col">Exams</th>
+                    <th scope="col">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% csrf_token %}
+            
+                {% for CA in continousassessment %}
+                    <tr data-id='{{ CA.id }}'>
+                        <th scope="row">{{ CA.student.get_full_name }}</th>
+                        <td>{{ CA.subject.subject_name }}</td>
+                        <td class='scores cell' contenteditable="false">{{ CA.first_ca }}</td>
+                        <td class='scores cell' contenteditable="false">{{ CA.second_ca }}</td>
+                        <td class='scores cell' contenteditable="false">{{ CA.third_ca }}</td>
+                        <td class='scores exam-cell' contenteditable="false">{{ CA.exams }}</td>
+                        <td contenteditable="false">{{ CA.total }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+    <button type="submit" id="button" class="btn btn-primary">Save</button>
+</div>
 <script>
-    // This script handles the input from the teacher
-    // for all other cells if it is not the exam cell it'll check if the value is 0<x<10
-    // if it's exam its 0<x<70
-
-    function edit(){
-        const cells = document.querySelectorAll(".scores");
-        cells.forEach(function(cell) {
-            cell.contentEditable=true});
-        this.style.backgroundColor = 'green';
-    }
-
-    const edit_btn = document.getElementById("edit-btn");
-    edit_btn.onclick = edit;
-
-    function handleTestInput(cell) {
-        // Handle the input event here
-        console.log("Content changed:", cell.innerText);
-
-        value = +cell.innerText;
-        isValid = !isNaN(value);
-        
-        if (isValid) {
-            
-            if (value < 0 || value > 10) {
-                cell.style.backgroundColor = 'red';
-                cell.style.color = 'white';
-
-            } else {
-                cell.style.backgroundColor = 'white';
-                cell.style.color = 'black';
-            // will later refactor this to enable toggling of the bg.
-            }
-        } else {
-            console.log(`Invalid value assigned to cell.innerText ${cell.innerText}`);
-            cell.style.backgroundColor = 'red';
-            cell.style.color = 'white';
-        }
-    }
-
-    function handleExamInput(cell) {
-        // Handle the input event here
-        console.log("Content changed:", cell.innerText);
-
-        value = +cell.innerText;
-        isValid = !isNaN(value);
-        
-        if (isValid) {
-            
-            if (value < 0 || value > 70) {
-                cell.style.backgroundColor = 'red';
-                cell.style.color = 'white';
-
-            } else {
-                cell.style.backgroundColor = 'white';
-                cell.style.color = 'black';
-            // will later refactor this to enable toggling of the bg.
-            }
-        } else {
-            console.log(`Invalid value assigned to cell.innerText ${cell.innerText}`);
-            cell.style.backgroundColor = 'red';
-            cell.style.color = 'white';
-        }
-    }
-
-
-    function saveData() {
-        const data_arr = {};
-        const tbody = table.getElementsByTagName('tbody')[0];
-        const token = tbody.querySelector('input[type=hidden]').value;
-        data_arr['csrfmiddlewaretoken'] = token;
-        console.log(tbody)
-        
-        const rows = tbody.getElementsByTagName('tr');
-        for (let i = 1; i < rows.length; i++) {
-            const cells = rows[i].getElementsByTagName('td');
-            const ca_id = rows[i].dataset.id;
-            for (let i = 2; i < cells.length; i++) {
-                if (cells[i].style.backgroundColor == 'red') {
-                    alert('The inputs are not correctly formatted');
-                    // find a way to make this break the process of submitting the scores
-                    break;
-                };
-            };
-            const rowData = {
-                first_ca: cells[2].innerText,
-                second_ca: cells[3].innerText,
-                third_ca: cells[4].innerText,
-                exams: cells[5].innerText
-            };
-            data_arr[ca_id] = rowData;
-        };
-
-        console.log('Data Arr: ', data_arr);
-        
-        // sendDataToBackend(data_arr);
-        return data_arr;
-    }
-
-    function sendDataToBackend(saveData) {
-        console.log('sending data to backend: ', saveData);
-        const csrfToken = "{{ csrf_token }}";
-        fetch('/record/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken,
-            },
-            body: saveData,
-        }
-        )
-        .then(res => console.log('res', res))
-        .then(data => {
-            console.log('data:', data);
-            // setTimeout(function() {
-            //     location.reload();
-            // }, 50000);
-        })
-        .catch(err => {console.error(err);});
-
-    }
+    const csrfToken = "{{ csrf_token }}";
+</script>
+<script src="{% static 'Staff/js/subjectTeacher.js' %}">
 </script>
 {% endblock %}

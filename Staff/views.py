@@ -65,20 +65,20 @@ def ScoresRecord(request):
     teachers it saves it to the database"""
 
     if request.method == 'POST':
-        # data = json.loads(request.body)
-        data = request.POST
-        print(f'body: {request.body}')
-        print(f'data: {data}')
+        data = json.loads(request.body)
+        # print(f'body: {data}')
         try:
             with transaction.atomic():
+                print(f'data: {data}')
                 for caID, caValues in data.items():
+                    print(f'{caID} {caValues}')
                     try:
                         CA = ContinousAssessment.objects.get(id=caID)
+                        print(CA)
                         for k, v in caValues.items():
                             """This will set the values of the CA"""
                             setattr(CA, k, v)
-                        CA.total = int(CA.first_ca) + int(CA.second_ca) +\
-                            int(CA.third_ca) + int(CA.exams)
+                        CA.total = int(CA.first_ca) + int(CA.second_ca) + int(CA.third_ca) + int(CA.exams)
                         CA.save()
                     except ObjectDoesNotExist:
                         pass
@@ -89,9 +89,8 @@ def ScoresRecord(request):
             }, status=500)
         return JsonResponse({
             'status': 'success',
-        })
-    else:
-        print(request.POST)
+            'message': 'Updated successfully',
+        }, status=200)
     return JsonResponse({
         'status': 'error',
         'message': "Invalid Request"
