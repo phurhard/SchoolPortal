@@ -5,25 +5,7 @@
 <div class="">
     <p>Name: {{ student.get_full_name }}</p>
     <p>Reg_Num: {{ student.reg_num }}</p>
-    <p>
-        {% if student.current_class%}
-        Class: {{ student.current_class }}
-        {%else%}
-        <ul class="dropdown">
-            <li class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false"></li>
-            <ul class="dropdown-menu">
-                {% for grade in grades %}
-                <li class="dropdown-item">
-                    {{ grade}}
-                </li>
-                {% endfor %}
-            </ul>
-
-        </ul>
-        {%endif%}
-
-    </p>
+    <p>Class: {{ student.current_class }}</p>
 
 
 

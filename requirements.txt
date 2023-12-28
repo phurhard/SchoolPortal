@@ -27,6 +27,7 @@ pyHanko==0.21.0
 pyhanko-certvalidator==0.26.3
 pypdf==3.17.4
 pypng==0.20220715.0
+pyscopg2==66.0.2
 python-bidi==0.4.2
 python-dotenv==1.0.0
 PyYAML==6.0.1
