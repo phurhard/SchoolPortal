@@ -172,6 +172,7 @@ def changePassword(request, id):
             password_check = check_password(old_password, user.password)
             if password_check:
                 user.set_password(password)
+                user.first_login = False
                 user.save()
                 return JsonResponse({
                     "status": 200,

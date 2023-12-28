@@ -32,6 +32,7 @@ class CustomUser(AbstractUser):
     other_name = models.CharField(max_length=255, default='', null=True)
     reg_num = models.CharField(max_length=255, unique=True)
     username = None
+    first_login = models.BooleanField(default=True)
     phone_number = models.CharField(max_length=20)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)

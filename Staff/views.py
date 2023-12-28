@@ -24,12 +24,15 @@ def teacher_profile(request):
     if not request.user.is_authenticated:
         return redirect('/login/')
     else:
-        try:
-            user_id = request.user.id
-            teacher = Teacher.objects.get(id=user_id)
-            subjects = teacher.subject_set.all()
-        except ObjectDoesNotExist:
-            raise Http404('You are not authenticated for this page')
+        if request.user.first_login:
+            return redirect(f'/auth/{request.user.id}/change_password/')
+        else:
+            try:
+                user_id = request.user.id
+                teacher = Teacher.objects.get(id=user_id)
+                subjects = teacher.subject_set.all()
+            except ObjectDoesNotExist:
+                raise Http404('You are not authenticated for this page')
     return render(request, 'Staff/teacherProfile.html', {'teacher': teacher, 'subjects': subjects})
 
 

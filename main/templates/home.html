@@ -1,9 +1,27 @@
 {% extends 'main/base.html' %}
+{% load static %}
 {% block content %}
-<h1>
-    This is the home page from which all others redirect
-</h1>
-
-<button><a href='/auth/staff'>Teacher</a></button>
-<button><a href='/auth/student'>Student</a></button>
+<div class="container">
+    <div class="">
+    <h4 class="card-header">
+        introduction
+    </h4>
+    <p>  some very long article about how great al iman is and the different subjects and things they do.
+    </p>
+    <div class="staff">
+        <p>Thinking about impacting knowledge to the next generation? Join us today</p>
+        {% if user.is_authenticated%}
+        {%else%}
+    <button class="card-link btn btn-large btn-primary"><a class="text-light" href='/auth/staff'>Teacher</a></button>
+    {%endif%}
+    </div>
+    <div class="student">
+        <p>Are you looking to gain from this pool of knowledge?</p>
+        {% if user.is_authenticated %}
+        {% else%}
+        <button class="btn btn-large btn-secondary"><a class="text-light" href='/auth/student'>Student</a></button>
+        {%endif%}
+    </div>
+</div>
+</div>
 {% endblock content %}

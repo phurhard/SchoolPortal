@@ -106,7 +106,7 @@ DATABASES = {
         'PASSWORD': os.getenv('SauvePASSWORD'),
         'HOST': os.getenv('SauveHOST'),
         'USER': os.getenv('SauveUSER'),
-        'PORT': os.getenv('SauvePORT'), 
+        'PORT': os.getenv('SauvePORT'),
     },
     'local': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -114,7 +114,7 @@ DATABASES = {
         'PASSWORD': os.getenv('PASSWORDLOCAL'),
         'HOST': os.getenv('HOSTLOCAL'),
         'USER': os.getenv('USERLOCAL'),
-        'PORT': os.getenv('PORTLOCAL'), 
+        'PORT': os.getenv('PORTLOCAL'),
     },
 }
 

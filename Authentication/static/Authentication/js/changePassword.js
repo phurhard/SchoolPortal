@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         } else if (data.status == 200){
                             console.log('Password changed successfully');
                             setTimeout(function() {
-                                location.reload();
+                                window.location.href = '/login/';
                             }, 500);
                             alert('Password changed successfully');
                         }
