@@ -78,6 +78,7 @@ class Teacher(CustomUser):
 class Student(CustomUser):
     current_class = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True)
     subjects = models.ManyToManyField('Subject')
+    my_class = models.ForeignKey('Class', on_delete=models.CASCADE, null=True)
 
     def to_json(self):
         return json.dumps(model_to_dict(self))
@@ -91,7 +92,8 @@ class Student(CustomUser):
 
 class Subject(models.Model):
     subject_name = models.CharField(max_length=100)
-    subject_class = models.ForeignKey("Grade", related_name='subjects', on_delete=models.CASCADE, default=None)
+    subject_class = models.ForeignKey("Grade", related_name='subjects', on_delete=models.CASCADE, null=True, default=None)
+    class_subject = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, default=None)
     teacher_name = models.ForeignKey("Teacher", on_delete=models.SET_NULL, null=True, default=None)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -109,6 +111,25 @@ class Subject(models.Model):
 
     def __str__(self):
         return f'{self.subject_name} ({self.subject_class}) - {self.teacher_name}'
+
+
+class Section(models.Model):
+    name = models.CharField(max_length=50)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        if self.parent:
+            return f'{self.parent}_{self.name}'
+        else:
+            return f'{self.name}'
+
+
+class Class(models.Model):
+    name = models.CharField(max_length=2)
+    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.section}_{self.name}'
 
 
 class Grade(models.Model):

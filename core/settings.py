@@ -108,7 +108,7 @@ DATABASES = {
         'USER': os.getenv('SauveUSER'),
         'PORT': os.getenv('SauvePORT'),
     },
-    'local': {
+    'defaut': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('NAMELOCAL'),
         'PASSWORD': os.getenv('PASSWORDLOCAL'),
