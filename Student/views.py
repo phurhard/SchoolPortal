@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
-from main.models import Student, Grade
+from main.models import Student, Class, Subject, Grade
 from django.template.loader import get_template
 from django_xhtml2pdf.utils import render_to_pdf_response
-from xhtml2pdf import pisa
+import json
+from .serializers import SubjectSerializers
 
 # Create your views here.
 
@@ -14,7 +15,7 @@ def student_profile(request):
         return redirect(to='/login')
     else:
         if request.user.first_login:
-            return redirect(to='/change_password')
+            return redirect(to=f'auth/{request.user.id}/change_password')
     student = request.user
     return render(request, 'Students/studentProfile.html', {'student': student})
 
@@ -45,21 +46,33 @@ def resultToPDF(request):
     return response
 
 
-def selectClass(request, id):
+def selectClass(request):
     """how to select class
 
     show a dropdown of all the classes, then once one is selected it should be set as the class and all other ones should not be shown
 
-    get all classes, send it to frontend, display it as a dropdown send the reply via fetch to update the backend.
+    get all classes, send it to frontend, display it as a dropdown send the
+    reply via fetch to update the backend.
     """
     if request.method == 'POST':
-        data = request.POST
-        # student = Student.objects.get(id=id)
+        data = json.loads(request.body)
+        print(data['value'])
+
+        subjects = Subject.objects.filter(subject_class=data['value'])
+        print(subjects)
+        # return render(request, 'Students/subjects.html', {'subjects': subjects})
         # student.current_class = data
-        print(f'class: {data}')
-    else:
-        classes = Grade.objects.all()
+        # print(f'class: {data}')
+        subject = SubjectSerializers(subjects, many=True)
         return JsonResponse({
             'status': 'success',
-            'data': classes,
+            'message': 'subjects returned',
+            'data': subject.data,
         }, status=200)
+    else:
+        classes = Grade.objects.all()
+        # return JsonResponse({
+        #     'status': 'success',
+        #     'data': classes,
+        # }, status=200)
+        return render(request, 'Students/subjects.html', {'classes': classes})

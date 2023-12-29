@@ -1,29 +1,112 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <!-- Course registration -->
-    Get a list of all courses in a table with the row having a multiple checkbox which can be selected and deselected, 
-    once done, it'll be sent to the backend for processing which will automatically update the user subjects. the subjects displayed will be based on the class selected
+{% extends "main/base.html" %}
+{% block link %}{% endblock link %}
+{% block content %}
+<div class="container">
+<!-- Course registration -->
+    <div class="grades">
+        <h5>Select your grade</h5>
+        <form id="myform">
+            {% csrf_token %}
+            
+            <label for="dropdown">Select your class</label>
+            <select id="dropdown" name="selectedOption">
+                <option value='#'></option>
+                {% for grade in classes %}
+                <option value={{ grade.id }}>{{ grade }}</option>
+                {% endfor %}
+            </select>
+            <button type="button" class="btn btn-primary">Enter</button>
+        </form>
+    </div>
+    <div class="subjects">
+        <table id="table" class="table table-hover table-bordered">
+            <thead>
+                <th scope="col">checkbox</th>
+                <th>Subject Name</th>
+                {% comment %} <th>s</th> {% endcomment %}
+            </thead>
+            <tbody id="tbody">
+            </tbody>
+        </table>
+        <button type="button" style="display: none;" class="btn btn-primary" id="submitButton">Submit</button>
+    </div>
+<div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("DOMContentLoaded succesfully");
 
-    algoriths
+            // table
+            const table = document.getElementById('table');
+            const tbody = table.getElementsByTagName('tbody')[0];
+            const dropdown = document.getElementById('dropdown');
+            dropdown.addEventListener("change", function () {
+                console.log('Dropdown ', dropdown.value);
+                const csrfToken = '{{ csrf_token }}';
+                // make a fetch request
+                fetch('/student/course_registration/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: JSON.stringify({'value': dropdown.value})
+                })
+                .then(res => res.json()) 
+                .then(data => {
+                    console.log('data', data);
+                    populateTable(data);
 
-    select a specific class
-    for class in classes
-    list class
+                })
+                .catch(err => console.log(err));
+            });
 
-    send selected class to a var in js
-    selectedClass = selectedClass
+            function populateTable(data) {
+                //get table
 
-    for subjects in subjectsList
-    if subjects.class = selectedClass
-    list the subjects
+                const tbody = document.getElementById('tbody');
+                const button = document.getElementById('submitButton');
+                button.style.display = 'block';
 
-    collect all subjects selected and send to the beok
-    
-</body>
-</html>
+                tbody.innerHTML = '';
+                console.log(Object.values(data));
+                console.log(data.data);
+                data.data.forEach((subject) => {
+                    const row = tbody.insertRow();
+                    const checkboxCell = row.insertCell(0)
+                    const cell1 = row.insertCell(1);
+                    // const hiddenCell = row.insertCell(2);
+                    const checkbox = document.createElement('input');
+                    // const hidden = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    // hidden.type = 'hidden';
+                    // hidden.value = subject.id;
+                    // hidden.name = 'subject.subject_name';
+                    checkboxCell.appendChild(checkbox);
+                    // hiddenCell.appendChild(hidden);
+                    cell1.textContent = subject.subject_name;
+                    cell1.id = subject.id
+                });
+            }
+
+            function submitCheckbox() {
+                const button = document.getElementById('submitButton');
+
+                button.addEventListener('click', function() {
+                    const checkboxes = document.querySelectorAll('#tbody input[type="checkbox"]:checked');
+
+                    // Extract the datas
+                    const selectedSubjects = Array.from(checkboxes).map(checkbox => {
+                        const row = checkbox.closest('tr');
+                        const subject_name = row.cells[1].textContent;
+                        const subject_id = row.cells[1].id;
+                        return {subject_name, subject_id};
+                    });
+                    console.log(selectedSubjects);
+                })
+            }
+
+            submitCheckbox();
+
+        });
+    </script>
+{% endblock content %}
