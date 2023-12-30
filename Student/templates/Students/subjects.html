@@ -15,7 +15,7 @@
                 <option value={{ grade.id }}>{{ grade }}</option>
                 {% endfor %}
             </select>
-            <button type="button" class="btn btn-primary">Enter</button>
+            {% comment %} <button type="button" class="btn btn-primary">Enter</button> {% endcomment %}
         </form>
     </div>
     <div class="subjects">
@@ -34,6 +34,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             console.log("DOMContentLoaded succesfully");
+            const csrfToken = '{{ csrf_token }}';
 
             // table
             const table = document.getElementById('table');
@@ -41,8 +42,8 @@
             const dropdown = document.getElementById('dropdown');
             dropdown.addEventListener("change", function () {
                 console.log('Dropdown ', dropdown.value);
-                const csrfToken = '{{ csrf_token }}';
                 // make a fetch request
+                if (+dropdown.value) {
                 fetch('/student/course_registration/', {
                     method: 'POST',
                     headers: {
@@ -58,6 +59,12 @@
 
                 })
                 .catch(err => console.log(err));
+            } else {
+                tbody.innerHTML = '';
+                const button = document.getElementById('submitButton');
+                button.style.display = 'none';
+                
+            }
             });
 
             function populateTable(data) {
@@ -101,7 +108,25 @@
                         const subject_id = row.cells[1].id;
                         return {subject_name, subject_id};
                     });
-                    console.log(selectedSubjects);
+                    if (selectedSubjects) {
+                        console.log(selectedSubjects);
+                    } else {
+                        console.log('No selected subjects');
+                    }
+                    fetch('/student/registration/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        },
+                        body: JSON.stringify(selectedSubjects)
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log(data);
+                        window.location.href='/student/'
+                    })
+                    .catch(err => console.log(err));
                 })
             }
 
