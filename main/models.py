@@ -29,6 +29,8 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractUser):
+    first_name = models.CharField(max_length=255, default='', null=True)
+    last_name = models.CharField(max_length=255, default='', null=True)
     other_name = models.CharField(max_length=255, default='', null=True)
     reg_num = models.CharField(max_length=255, unique=True)
     username = None
@@ -50,7 +52,7 @@ class CustomUser(AbstractUser):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
-    
+
     def __str__(self):
         return self.get_full_name()
 

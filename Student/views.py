@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 from main.models import Student, Class, Subject, Grade
 from django.template.loader import get_template
 from django_xhtml2pdf.utils import render_to_pdf_response
@@ -15,7 +16,7 @@ def student_profile(request):
         return redirect(to='/login')
     else:
         if request.user.first_login:
-            return redirect(to=f'auth/{request.user.id}/change_password')
+            return redirect(to=f'/auth/{request.user.id}/change_password')
     student = request.user
     return render(request, 'Students/studentProfile.html', {'student': student})
 
@@ -60,9 +61,6 @@ def selectClass(request):
 
         subjects = Subject.objects.filter(subject_class=data['value'])
         print(subjects)
-        # return render(request, 'Students/subjects.html', {'subjects': subjects})
-        # student.current_class = data
-        # print(f'class: {data}')
         subject = SubjectSerializers(subjects, many=True)
         return JsonResponse({
             'status': 'success',
@@ -71,8 +69,30 @@ def selectClass(request):
         }, status=200)
     else:
         classes = Grade.objects.all()
-        # return JsonResponse({
-        #     'status': 'success',
-        #     'data': classes,
-        # }, status=200)
         return render(request, 'Students/subjects.html', {'classes': classes})
+
+
+def courseRegistration(request):
+    '''Assign the subjects sent to the student subjects'''
+    if request.method == 'POST':
+        # get the user
+        user = request.user.id
+
+        data = json.loads(request.body)
+        print(data)
+        print(type(data))
+        try:
+            for sub in data:
+                subject = Subject.objects.get(id=sub['subject_id'])
+                # user.subjects.add(subject)
+                print(request.user)
+                print(f'{subject} added')
+            return JsonResponse({
+                'success': True,
+                'message': 'Your subjects have been recorded succefully'
+            }, status=200)
+        except ObjectDoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'The process could not be completed, please reload the page'
+            }, status=404)
