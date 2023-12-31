@@ -205,12 +205,14 @@ def assign_subjects_to_student(sender, instance, created, **kwargs):
         subjects_for_class = Subject.objects.filter(subject_class=instance.current_class)
         instance.subjects.add(*subjects_for_class)
 
+
 @receiver(post_save, sender=Student)
 def check_subjects(sender, instance, created, **kwargs):
     """Checks if the subject selected are the subjects allocated to that class"""
     for subject in instance.subjects.all():
         if subject.subject_class != instance.current_class:
             del subject # find a way to stop all the process altogether so other functions are not called
+
 
 @receiver(post_save, sender=Student)
 def assign_continous_assessment(sender, instance, created, **kwargs):
@@ -228,7 +230,7 @@ def assign_continous_assessment(sender, instance, created, **kwargs):
         for subject in instance.subjects.all():
             ContinousAssessment.objects.create(subject=subject, student=instance)
 
-        # then remove ca that those not have subject
+        # then remove ca that does not have subject
         for ca in instance.continousassessment_set.all():
             if ca.subject not in instance.subjects.all():
                 del ca

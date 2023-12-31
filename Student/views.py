@@ -12,12 +12,12 @@ from .serializers import SubjectSerializers
 
 def student_profile(request):
     '''this is the landing page for student'''
-    if not request.user.is_authenticated:
+    student = request.user
+    if not student.is_authenticated:
         return redirect(to='/login')
     else:
-        if request.user.first_login:
-            return redirect(to=f'/auth/{request.user.id}/change_password')
-    student = request.user
+        if student.first_login:
+            return redirect(to=f'/auth/{student.id}/change_password')
     return render(request, 'Students/studentProfile.html', {'student': student})
 
 
@@ -84,7 +84,11 @@ def courseRegistration(request):
         try:
             for sub in data:
                 subject = Subject.objects.get(id=sub['subject_id'])
-                # user.subjects.add(subject)
+                user = Student.objects.get(pk=user)
+                if subject.subject_class == user.current_class:
+                    user.subjects.add(subject)
+                else:
+                    user.subjects.remove(subject)
                 print(request.user)
                 print(f'{subject} added')
             return JsonResponse({
