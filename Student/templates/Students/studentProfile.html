@@ -15,7 +15,7 @@
 
 
 
-    <p><a href="{% url 'students_result' user.student.id %}">Result</a></p>
+    <p><a href="{% url 'students_result' student.id %}">Result</a></p>
 </div>
 <div>
 <p>Subjects:</p>
@@ -25,7 +25,7 @@
         <th scope="col">Teacher Name</th>
     </thead>
     <tbody>
-        {% for subject in user.student.subjects.all %}
+        {% for subject in student.subjects.all %}
         <tr>
             <td>{{ subject.subject_name }}</td>
             <td>{{ subject.teacher_name}}</td>

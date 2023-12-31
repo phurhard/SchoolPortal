@@ -16,6 +16,7 @@ def student_profile(request):
     if not student.is_authenticated:
         return redirect(to='/login')
     else:
+        student = Student.objects.get(id=student.id)
         if student.first_login:
             return redirect(to=f'/auth/{student.id}/change_password')
     return render(request, 'Students/studentProfile.html', {'student': student})
@@ -79,8 +80,6 @@ def courseRegistration(request):
         user = request.user.id
 
         data = json.loads(request.body)
-        print(data)
-        print(type(data))
         try:
             for sub in data:
                 subject = Subject.objects.get(id=sub['subject_id'])
