@@ -1,11 +1,17 @@
 {% extends "main/base.html" %}
+{% load static %}
 {% block content %}
 <div class="container">
 <h5 class="form-text text-secondary">Student Profile</h5>
 <div class="">
     <p>Name: {{ student.get_full_name }}</p>
     <p>Reg_Num: {{ student.reg_num }}</p>
-    <p>Class: {{ student.current_class }}</p>
+    <p>Class: {% if student.current_class %}
+        {{ student.current_class }}
+        {% else %}
+        <a href="{% url 'courseRegistration' %}" />Register your class</a>
+        {% endif %}
+    </p>
 
 
 
