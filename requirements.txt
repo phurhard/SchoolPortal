@@ -10,7 +10,7 @@ colorama==0.4.6
 crispy-bootstrap5==2023.10
 cryptography==41.0.7
 cssselect2==0.7.0
-Django==5.0
+Django==4.2
 django-cors-headers==4.3.1
 django-crispy-forms==2.1
 django-jazzmin==2.6.0
