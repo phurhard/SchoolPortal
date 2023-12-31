@@ -100,7 +100,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
-    'railway': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('SauveNAME'),
         'PASSWORD': os.getenv('SauvePASSWORD'),
@@ -116,7 +116,7 @@ DATABASES = {
         'USER': os.getenv('USERLOCAL'),
         'PORT': os.getenv('PORTLOCAL'),
     },
-    'default': {
+    'defavult': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DATABASE'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
