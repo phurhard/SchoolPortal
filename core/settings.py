@@ -96,11 +96,11 @@ CSRF_TRUSTED_ORIGINS = ['http://*', 'http://localhost']
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'defaul': {
+    'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
-    'default': {
+    'railway': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('SauveNAME'),
         'PASSWORD': os.getenv('SauvePASSWORD'),
@@ -108,7 +108,7 @@ DATABASES = {
         'USER': os.getenv('SauveUSER'),
         'PORT': os.getenv('SauvePORT'),
     },
-    'defaut': {
+    'local': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('NAMELOCAL'),
         'PASSWORD': os.getenv('PASSWORDLOCAL'),
@@ -116,7 +116,7 @@ DATABASES = {
         'USER': os.getenv('USERLOCAL'),
         'PORT': os.getenv('PORTLOCAL'),
     },
-    'defavult': {
+    'vercel': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DATABASE'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
