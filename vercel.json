@@ -1,0 +1,10 @@
+{
+    "builds": [
+      {
+        "src": "./",
+        "use": "@now/python",
+        "config": { "maxLambdaSize": "1024mb" },
+        "buildCommand": "pip install -r requirements.txt"
+      }
+    ]
+  }
